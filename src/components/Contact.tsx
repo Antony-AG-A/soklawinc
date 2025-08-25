@@ -103,7 +103,7 @@ Message:
 ${formData.message}
       `.trim();
 
-      const mailtoUrl = `mailto:nairobi@soklaw.co.ke?subject=New Contact Form Submission&body=${encodeURIComponent(emailBody)}`;
+      const mailtoUrl = `mailto:Info@soklaw.co.ke?subject=New Contact Form Submission&body=${encodeURIComponent(emailBody)}`;
       window.open(mailtoUrl, '_blank');
       
       setSubmitStatus('success');
