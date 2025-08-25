@@ -29,115 +29,131 @@ const BlogPostPage = () => {
       try {
         setLoading(true);
         
-        // Check if this is a BlogHandy post
-        if (postId?.startsWith('bloghandy-')) {
-          // Load BlogHandy script if not already loaded
-          const loadBlogHandy = () => {
-            // Check if BlogHandy is already loaded
-            if (window.bh_id || document.getElementById('bloghandy-script')) {
-              setBlogHandyLoaded(true);
-              displayBlogHandyPost();
-              return;
-            }
+        // Always try to load BlogHandy first, then fallback
+        const loadBlogHandy = () => {
+          // Check if BlogHandy is already loaded
+          if (window.bh_id && document.getElementById('bloghandy-script')) {
+            setBlogHandyLoaded(true);
+            displayBlogHandyPost();
+            return;
+          }
 
-            // Set BlogHandy ID
+          // Set BlogHandy ID only if not set
+          if (!window.bh_id) {
             window.bh_id = "60HwYmcpS5PD0XNTgyMQ";
+          }
 
-            // Create and load BlogHandy script
-            const script = document.createElement('script');
+          // Create and load BlogHandy script only if not exists
+          let script = document.getElementById('bloghandy-script') as HTMLScriptElement;
+          if (!script) {
+            script = document.createElement('script');
             script.id = 'bloghandy-script';
             script.src = 'https://www.bloghandy.com/api/bh_blogengine.js';
             script.async = true;
             
             script.onload = () => {
               setBlogHandyLoaded(true);
-              console.log('BlogHandy script loaded successfully');
-              
-              // Wait for BlogHandy to load content, then display the specific post
+              // Wait for BlogHandy to load content
               setTimeout(() => {
                 displayBlogHandyPost();
               }, 2000);
             };
             
             script.onerror = () => {
-              console.error('Failed to load BlogHandy script');
-              setError('Failed to load blog content');
-              setLoading(false);
+              console.error('Failed to load BlogHandy script, using fallback');
+              displayFallbackPost();
             };
 
             document.head.appendChild(script);
-          };
+          } else {
+            // Script exists, try to display post
+            setBlogHandyLoaded(true);
+            setTimeout(() => {
+              displayBlogHandyPost();
+            }, 1000);
+          }
+        };
 
-          loadBlogHandy();
-        } else {
-          // Handle fallback posts (your original logic)
-          displayFallbackPost();
-        }
+        loadBlogHandy();
       } catch (err) {
-        setError('Failed to load blog post');
-        console.error('Error loading blog post:', err);
-        setLoading(false);
+        console.error('Error in loadBlogHandyForPost:', err);
+        displayFallbackPost();
       }
     };
 
     const displayBlogHandyPost = () => {
-      // Get post index from postId
-      const postIndex = parseInt(postId?.replace('bloghandy-', '') || '0');
-      
-      // Try to find the BlogHandy container
-      const blogContainer = document.getElementById('bh-posts');
-      
-      if (!blogContainer) {
-        // Create a temporary container to load BlogHandy content
-        const tempContainer = document.createElement('div');
-        tempContainer.id = 'bh-posts';
-        tempContainer.style.display = 'none';
-        document.body.appendChild(tempContainer);
+      try {
+        // Get post index from postId
+        const postIndex = parseInt(postId?.replace('bloghandy-', '') || '0');
         
-        // Wait a bit more for BlogHandy to populate
-        setTimeout(() => {
-          displayBlogHandyPost();
-        }, 1000);
-        return;
-      }
-
-      // Find all posts
-      const posts = blogContainer.querySelectorAll('.bh-post, .post, article, .blog-post, [class*="post"]');
-      
-      if (posts.length > postIndex) {
-        const selectedPost = posts[postIndex] as HTMLElement;
+        // Try to find the BlogHandy container
+        let blogContainer = document.getElementById('bh-posts');
         
-        // Clone the post content
-        const postContent = selectedPost.cloneNode(true) as HTMLElement;
-        
-        // Remove any click handlers from the cloned content
-        postContent.style.cursor = 'default';
-        postContent.onclick = null;
-        
-        // Find and remove click handlers from links
-        const links = postContent.querySelectorAll('a');
-        links.forEach(link => {
-          link.onclick = null;
-          // Restore original link functionality
-          link.style.cursor = 'pointer';
-        });
-        
-        // Display the post content
-        if (contentRef.current) {
-          contentRef.current.innerHTML = '';
-          contentRef.current.appendChild(postContent);
+        if (!blogContainer) {
+          // Create a temporary container to load BlogHandy content
+          blogContainer = document.createElement('div');
+          blogContainer.id = 'bh-posts';
+          blogContainer.style.display = 'none';
+          document.body.appendChild(blogContainer);
+          
+          // Wait for BlogHandy to populate
+          setTimeout(() => {
+            displayBlogHandyPost();
+          }, 1500);
+          return;
         }
+
+        // Find all posts
+        const posts = blogContainer.querySelectorAll('.bh-post, .post, article, .blog-post, [class*="post"]');
         
-        setLoading(false);
-      } else {
-        // Post not found, show error or fallback
-        setError('Blog post not found');
-        setLoading(false);
+        if (posts.length > postIndex) {
+          const selectedPost = posts[postIndex] as HTMLElement;
+          
+          // Clone the post content
+          const postContent = selectedPost.cloneNode(true) as HTMLElement;
+          
+          // Clean up the cloned content
+          postContent.style.cursor = 'default';
+          postContent.removeAttribute('onclick');
+          
+          // Remove click handlers from all links and make them work normally
+          const links = postContent.querySelectorAll('a');
+          links.forEach(link => {
+            link.removeAttribute('onclick');
+            link.style.cursor = 'pointer';
+            // Ensure links open in new tab to prevent navigation issues
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+          });
+          
+          // Display the post content
+          if (contentRef.current) {
+            contentRef.current.innerHTML = '';
+            contentRef.current.appendChild(postContent);
+          }
+          
+          setLoading(false);
+        } else {
+          // Post not found, try fallback after a delay
+          setTimeout(() => {
+            if (posts.length === 0) {
+              // Still no posts, use fallback
+              displayFallbackPost();
+            } else {
+              // Posts loaded but index out of range
+              setError('Blog post not found');
+              setLoading(false);
+            }
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error displaying BlogHandy post:', err);
+        displayFallbackPost();
       }
     };
 
     const displayFallbackPost = () => {
-      // Your original fallback post logic here
+      try {
       const postIndex = parseInt(postId || '0');
       const fallbackPosts = [
         {
@@ -174,7 +190,6 @@ const BlogPostPage = () => {
           }),
           image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop'
         },
-        // Add your other fallback posts here...
       ];
 
       const selectedPost = fallbackPosts[postIndex] || fallbackPosts[0];
@@ -194,6 +209,11 @@ const BlogPostPage = () => {
       }
       
       setLoading(false);
+      } catch (err) {
+        console.error('Error displaying fallback post:', err);
+        setError('Failed to load blog post');
+        setLoading(false);
+      }
     };
 
     loadBlogHandyForPost();

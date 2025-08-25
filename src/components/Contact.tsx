@@ -52,19 +52,20 @@ const Contact = () => {
     setSubmitStatus('idle');
 
     try {
-      // Strategy 1: Try EngageBay if available (instant check)
-      if (window.EhForms && typeof window.EhForms.submitForm === 'function') {
+      // Strategy 1: Try EngageBay if available
+      if (typeof window !== 'undefined' && window.EhForms && typeof window.EhForms.submitForm === 'function') {
         try {
           await window.EhForms.submitForm('6351369855041536', formData);
           setSubmitStatus('success');
           resetForm();
+          setIsSubmitting(false);
           return;
         } catch (error) {
           console.warn('EngageBay submission failed, trying fallbacks:', error);
         }
       }
 
-      // Strategy 2: Direct API call to EngageBay (if you have endpoint)
+      // Strategy 2: Direct API call to EngageBay
       try {
         const response = await fetch('https://app.engagebay.com/dev/api/panel/subscribers', {
           method: 'POST',
@@ -82,13 +83,14 @@ const Contact = () => {
         if (response.ok) {
           setSubmitStatus('success');
           resetForm();
+          setIsSubmitting(false);
           return;
         }
       } catch (error) {
         console.warn('Direct API call failed, trying email fallback:', error);
       }
 
-      // Strategy 3: Email fallback using mailto (instant)
+      // Strategy 3: Email fallback using mailto
       const emailBody = `
 New Contact Form Submission:
 
@@ -106,6 +108,7 @@ ${formData.message}
       
       setSubmitStatus('success');
       resetForm();
+      setIsSubmitting(false);
 
     } catch (error) {
       console.error('All submission strategies failed:', error);
@@ -125,19 +128,6 @@ ${formData.message}
       message: ''
     });
   };
-
-  // Preload EngageBay script immediately (non-blocking)
-  useEffect(() => {
-    if (!window.EhForms) {
-      const script = document.createElement('script');
-      script.src = 'https://d2p078bqz5urf7.cloudfront.net/jsforms/ehforms.js';
-      script.async = true;
-      script.onload = () => {
-        console.log('EngageBay loaded for future submissions');
-      };
-      document.head.appendChild(script);
-    }
-  }, []);
 
   const officeInfo = [
     {

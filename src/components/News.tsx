@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 
 const News = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [blogHandyLoaded, setBlogHandyLoaded] = useState(false);
+  const blogHandyInitialized = useRef(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -29,158 +30,170 @@ const News = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Initialize BlogHandy
+  // Initialize BlogHandy with proper cleanup and error handling
   useEffect(() => {
-    // Function to load BlogHandy script
-    const loadBlogHandy = () => {
-      // Check if BlogHandy is already loaded
-      if (window.bh_id || document.getElementById('bloghandy-script')) {
+    let timeoutId: NodeJS.Timeout;
+    let intervalId: NodeJS.Timeout;
+    
+    const loadBlogHandy = async () => {
+      // Prevent multiple initializations
+      if (blogHandyInitialized.current) {
         return;
       }
-
-      // Set BlogHandy ID
-      window.bh_id = "60HwYmcpS5PD0XNTgyMQ";
-
-      // Create and load BlogHandy script
-      const script = document.createElement('script');
-      script.id = 'bloghandy-script';
-      script.src = 'https://www.bloghandy.com/api/bh_blogengine.js';
-      script.async = true;
       
-      script.onload = () => {
-        console.log('BlogHandy script loaded successfully');
-        // Wait for BlogHandy to populate content, then setup click handlers
-        setTimeout(() => {
+      blogHandyInitialized.current = true;
+      setIsLoading(true);
+
+      try {
+        // Check if BlogHandy is already loaded
+        if (window.bh_id && document.getElementById('bloghandy-script')) {
+          setBlogHandyLoaded(true);
+          setIsLoading(false);
           setupBlogHandyClickHandlers();
-        }, 2000);
-      };
-      
-      script.onerror = () => {
-        console.error('Failed to load BlogHandy script');
-      };
+          return;
+        }
 
-      document.head.appendChild(script);
+        // Set BlogHandy ID only once
+        if (!window.bh_id) {
+          window.bh_id = "60HwYmcpS5PD0XNTgyMQ";
+        }
+
+        // Create and load BlogHandy script only if not exists
+        let script = document.getElementById('bloghandy-script') as HTMLScriptElement;
+        if (!script) {
+          script = document.createElement('script');
+          script.id = 'bloghandy-script';
+          script.src = 'https://www.bloghandy.com/api/bh_blogengine.js';
+          script.async = true;
+          
+          script.onload = () => {
+            setBlogHandyLoaded(true);
+            // Wait for BlogHandy to populate content
+            timeoutId = setTimeout(() => {
+              setupBlogHandyClickHandlers();
+              setIsLoading(false);
+            }, 2000);
+          };
+          
+          script.onerror = () => {
+            console.error('Failed to load BlogHandy script');
+            setIsLoading(false);
+          };
+
+          document.head.appendChild(script);
+        } else {
+          // Script already exists, just setup handlers
+          setBlogHandyLoaded(true);
+          timeoutId = setTimeout(() => {
+            setupBlogHandyClickHandlers();
+            setIsLoading(false);
+          }, 1000);
+        }
+      } catch (error) {
+        console.error('Error loading BlogHandy:', error);
+        setIsLoading(false);
+      }
     };
 
     loadBlogHandy();
+    
+    // Cleanup function
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
-  // Setup click handlers for BlogHandy posts to prevent page refresh
+  // Setup click handlers for BlogHandy posts with better error handling
   const setupBlogHandyClickHandlers = () => {
     const blogContainer = document.getElementById('bh-posts');
     if (!blogContainer) {
-      console.log('BlogHandy container not found');
       return;
     }
 
-    // Function to setup handlers for all clickable elements
-    const setupHandlers = () => {
-      // Find all links within the BlogHandy container
-      const links = blogContainer.querySelectorAll('a[href]');
-      links.forEach((link, index) => {
-        const anchor = link as HTMLAnchorElement;
-        
-        // Store original href for potential use
-        const originalHref = anchor.href;
-        
-        // Remove the click event listeners and add our own
-        const newLink = anchor.cloneNode(true) as HTMLAnchorElement;
-        anchor.parentNode?.replaceChild(newLink, anchor);
-        
-        newLink.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          // Open the original BlogHandy URL in a new tab/window
-          window.open(originalHref, '_blank', 'noopener,noreferrer');
-        });
+    try {
+      // Remove any existing event listeners to prevent duplicates
+      const existingHandlers = blogContainer.querySelectorAll('[data-handler-added]');
+      existingHandlers.forEach(element => {
+        element.removeAttribute('data-handler-added');
       });
 
-      // Also handle clicks on post containers that might not have links
-      const posts = blogContainer.querySelectorAll('.bh-post, .post, article, .blog-post, [class*="post"], div[onclick]');
-      posts.forEach((post, index) => {
-        const postElement = post as HTMLElement;
+      // Find all clickable elements
+      const clickableElements = blogContainer.querySelectorAll('a[href], .bh-post, .post, article, .blog-post, [class*="post"]');
+      
+      clickableElements.forEach((element) => {
+        const clickableElement = element as HTMLElement;
         
-        // Make sure it's clickable
-        postElement.style.cursor = 'pointer';
+        // Skip if handler already added
+        if (clickableElement.getAttribute('data-handler-added')) {
+          return;
+        }
         
-        // Find if there's a link inside this post
-        const linkInside = postElement.querySelector('a[href]') as HTMLAnchorElement;
+        // Mark as handled
+        clickableElement.setAttribute('data-handler-added', 'true');
+        clickableElement.style.cursor = 'pointer';
         
-        // Remove existing onclick handlers
-        postElement.removeAttribute('onclick');
+        // Remove any existing onclick attributes that might cause refresh
+        clickableElement.removeAttribute('onclick');
         
-        // Clone to remove all existing event listeners
-        const newPost = postElement.cloneNode(true) as HTMLElement;
-        postElement.parentNode?.replaceChild(newPost, postElement);
-        
-        newPost.addEventListener('click', (e) => {
+        // Add our controlled click handler
+        clickableElement.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
           
-          // If there's a link inside, open that
-          if (linkInside && linkInside.href) {
-            window.open(linkInside.href, '_blank', 'noopener,noreferrer');
+          // Find the URL to open
+          let urlToOpen = '';
+          
+          if (element.tagName === 'A') {
+            urlToOpen = (element as HTMLAnchorElement).href;
           } else {
-            // Fallback: try to find any data attributes or onclick content that might contain a URL
-            const onclickContent = postElement.getAttribute('onclick');
-            if (onclickContent) {
-              // Extract URL from onclick if it contains one
-              const urlMatch = onclickContent.match(/https?:\/\/[^\s'"]+/);
-              if (urlMatch) {
-                window.open(urlMatch[0], '_blank', 'noopener,noreferrer');
-              }
+            // Look for a link inside the element
+            const innerLink = element.querySelector('a[href]') as HTMLAnchorElement;
+            if (innerLink) {
+              urlToOpen = innerLink.href;
             }
           }
-        });
+          
+          if (urlToOpen && urlToOpen !== '#' && urlToOpen !== 'javascript:void(0)') {
+            // Open in new tab to prevent page refresh
+            window.open(urlToOpen, '_blank', 'noopener,noreferrer');
+          }
+        }, { passive: false });
       });
-    };
-
-    // Run setup immediately
-    setupHandlers();
-
-    // Also run setup after additional delays in case BlogHandy loads content dynamically
-    setTimeout(setupHandlers, 1000);
-    setTimeout(setupHandlers, 3000);
-    setTimeout(setupHandlers, 5000);
-
-    // Set up a MutationObserver to watch for changes in the BlogHandy container
-    const observer = new MutationObserver((mutations) => {
-      let shouldSetupHandlers = false;
-      
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-          // New content was added, setup handlers again
-          shouldSetupHandlers = true;
-        }
-      });
-      
-      if (shouldSetupHandlers) {
-        setTimeout(setupHandlers, 100);
-      }
-    });
-
-    // Start observing
-    observer.observe(blogContainer, {
-      childList: true,
-      subtree: true
-    });
-
-    // Clean up observer when component unmounts
-    return () => observer.disconnect();
+    } catch (error) {
+      console.error('Error setting up BlogHandy click handlers:', error);
+    }
   };
 
-  // Re-run click handler setup periodically to catch any dynamically loaded content
+  // Re-setup handlers when content changes
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const blogContainer = document.getElementById('bh-posts');
-      if (blogContainer && blogContainer.children.length > 0) {
-        setupBlogHandyClickHandlers();
-      }
-    }, 5000);
+    if (!blogHandyLoaded) return;
 
-    return () => clearInterval(intervalId);
-  }, [navigate]);
+    const blogContainer = document.getElementById('bh-posts');
+    if (!blogContainer) return;
+
+    // Set up MutationObserver to watch for dynamic content changes
+    const observer = new MutationObserver((mutations) => {
+      const hasNewContent = mutations.some(mutation => 
+        mutation.type === 'childList' && mutation.addedNodes.length > 0
+      );
+      
+      if (hasNewContent) {
+        // Debounce the handler setup
+        setTimeout(() => {
+          setupBlogHandyClickHandlers();
+        }, 500);
+      }
+    });
+
+    observer.observe(blogContainer, {
+      childList: true,
+      subtree: true,
+      attributes: false
+    });
+
+    return () => observer.disconnect();
+  }, [blogHandyLoaded]);
 
   return (
     <section ref={sectionRef} id="news" className="py-20" style={{ backgroundColor: '#f5f5f0' }}>
@@ -195,13 +208,21 @@ const News = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-yellow-500 to-yellow-400 mx-auto mt-6"></div>
         </div>
 
-        {/* BlogHandy Container - displays posts as they are from BlogHandy */}
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
+            <span className="ml-4 text-gray-600">Loading latest news...</span>
+          </div>
+        )}
+
+        {/* BlogHandy Container */}
         <div className="mt-8">
           <div 
             id="bh-posts" 
-            className="blog-posts-container"
+            className={`blog-posts-container ${isLoading ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}
           >
-            {/* BlogHandy will populate this container with original posts */}
+            {/* BlogHandy will populate this container */}
           </div>
         </div>
       </div>
