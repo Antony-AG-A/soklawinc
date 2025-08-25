@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, User, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Calendar, User, ExternalLink, Loader2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import NewsLoader from '../components/NewsLoader';
+import { updatePageMeta, handleExternalLinks } from '../utils/navigationUtils';
 
 const BlogPostPage = () => {
   const { postId } = useParams();
@@ -10,18 +12,12 @@ const BlogPostPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [blogHandyLoaded, setBlogHandyLoaded] = useState(false);
+  const [postData, setPostData] = useState<any>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Handle back navigation to home page and scroll to news section
+  // Handle back navigation using browser history
   const handleBackToNews = () => {
-    navigate('/');
-    // Wait for navigation to complete, then scroll to news section
-    setTimeout(() => {
-      const newsSection = document.getElementById('news');
-      if (newsSection) {
-        newsSection.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
+    navigate(-1); // Use browser history for proper back navigation
   };
 
   useEffect(() => {
@@ -109,6 +105,18 @@ const BlogPostPage = () => {
         if (posts.length > postIndex) {
           const selectedPost = posts[postIndex] as HTMLElement;
           
+          // Extract post data for better display
+          const title = selectedPost.querySelector('h1, h2, h3, .title, .bh-post-title')?.textContent || 'Blog Post';
+          const content = selectedPost.innerHTML;
+          const date = selectedPost.querySelector('.date, .bh-post-date')?.textContent || new Date().toLocaleDateString();
+          
+          setPostData({
+            title,
+            content,
+            date,
+            author: 'SOK Law Associates'
+          });
+          
           // Clone the post content
           const postContent = selectedPost.cloneNode(true) as HTMLElement;
           
@@ -116,14 +124,15 @@ const BlogPostPage = () => {
           postContent.style.cursor = 'default';
           postContent.removeAttribute('onclick');
           
-          // Remove click handlers from all links and make them work normally
+          // Handle links within the post content
           const links = postContent.querySelectorAll('a');
           links.forEach(link => {
             link.removeAttribute('onclick');
-            link.style.cursor = 'pointer';
-            // Ensure links open in new tab to prevent navigation issues
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
+            // Only external links should open in new tab
+            if (link.href && !link.href.includes(window.location.origin)) {
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+            }
           });
           
           // Display the post content
@@ -190,9 +199,41 @@ const BlogPostPage = () => {
           }),
           image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop'
         },
+        {
+          title: 'Employment Law Updates in Kenya',
+          content: `
+            <div class="prose prose-lg max-w-none">
+              <p>Recent changes in Kenya's employment law landscape have significant implications for both employers and employees. Our employment law specialists at SOK Law Associates provide comprehensive guidance on these developments.</p>
+              
+              <h2>Key Employment Law Changes</h2>
+              <p>The latest amendments include:</p>
+              <ul>
+                <li>Enhanced worker protection measures</li>
+                <li>Updated minimum wage requirements</li>
+                <li>Revised termination procedures</li>
+                <li>New workplace safety standards</li>
+                <li>Digital workplace regulations</li>
+              </ul>
+              
+              <h2>Impact on Businesses</h2>
+              <p>These changes require businesses to review and update their employment policies, contracts, and procedures to ensure compliance with the new regulations.</p>
+              
+              <p>Contact our employment law team for expert guidance on navigating these changes and ensuring your business remains compliant.</p>
+            </div>
+          `,
+          author: 'SOK Law Associates',
+          date: new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }),
+          image: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop'
+        }
       ];
 
       const selectedPost = fallbackPosts[postIndex] || fallbackPosts[0];
+      
+      setPostData(selectedPost);
       
       if (contentRef.current) {
         contentRef.current.innerHTML = `
@@ -200,7 +241,9 @@ const BlogPostPage = () => {
             <img src="${selectedPost.image}" alt="${selectedPost.title}" class="w-full h-64 lg:h-96 object-cover rounded-lg shadow-lg" />
           </div>
           <div class="flex items-center text-sm text-gray-500 mb-6">
+            <Calendar className="h-4 w-4 mr-2" />
             <span>${selectedPost.date}</span>
+            <User className="h-4 w-4 ml-6 mr-2" />
             <span class="ml-6">${selectedPost.author}</span>
           </div>
           <h1 class="text-3xl lg:text-4xl font-bold mb-8 text-gray-900">${selectedPost.title}</h1>
@@ -219,15 +262,35 @@ const BlogPostPage = () => {
     loadBlogHandyForPost();
   }, [postId]);
 
+  // Update document title when post data is available
+  useEffect(() => {
+    if (postData) {
+      updatePageMeta(
+        `${postData.title} - SOK Law Associates`,
+        `Read our latest article: ${postData.title}. Expert legal insights from SOK Law Associates.`
+      );
+    }
+    
+    // Cleanup: Reset title when component unmounts
+    return () => {
+      updatePageMeta('SOK Law Associates Website');
+    };
+  }, [postData]);
   if (loading) {
+  // Handle external links in post content
+  useEffect(() => {
+    if (contentRef.current && !loading) {
+      handleExternalLinks(contentRef.current);
+    }
+  }, [loading, postData]);
     return (
       <>
         <Navbar />
         <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading blog post...</p>
-          </div>
+          <NewsLoader 
+            message="Loading article content..." 
+            showIcon={false}
+          />
         </div>
         <Footer />
       </>
@@ -268,14 +331,59 @@ const BlogPostPage = () => {
               className="inline-flex items-center text-yellow-600 hover:text-yellow-700 mb-4 transition-colors font-medium group"
             >
               <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-              Back to News
+              Back to Previous Page
             </button>
+            
+            {/* Breadcrumb */}
+            <nav className="text-sm text-gray-500">
+              <button 
+                onClick={() => navigate('/')}
+                className="hover:text-yellow-600 transition-colors"
+              >
+                Home
+              </button>
+              <span className="mx-2">/</span>
+              <button 
+                onClick={() => {
+                  navigate('/');
+                  setTimeout(() => {
+                    document.getElementById('news')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }}
+                className="hover:text-yellow-600 transition-colors"
+              >
+                News
+              </button>
+              <span className="mx-2">/</span>
+              <span className="text-gray-700">
+                {postData?.title || 'Article'}
+              </span>
+            </nav>
           </div>
         </div>
 
         {/* Content Section */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <article className="bg-white rounded-lg shadow-lg p-8 lg:p-12">
+            {/* Article Header */}
+            {postData && (
+              <header className="mb-8 pb-6 border-b border-gray-200">
+                <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">
+                  {postData.title}
+                </h1>
+                <div className="flex items-center text-sm text-gray-500 gap-6">
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    <span>{postData.date}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <User className="h-4 w-4 mr-2" />
+                    <span>{postData.author}</span>
+                  </div>
+                </div>
+              </header>
+            )}
+            
             {/* BlogHandy content will be inserted here */}
             <div 
               ref={contentRef}
@@ -290,7 +398,7 @@ const BlogPostPage = () => {
                 className="btn-primary inline-flex items-center space-x-2"
               >
                 <ArrowLeft className="h-5 w-5" />
-                <span>Back to All News</span>
+                <span>Back to Previous Page</span>
               </button>
             </div>
           </article>
@@ -358,6 +466,16 @@ const BlogPostPage = () => {
           margin-bottom: 0.5rem;
           color: #4b5563;
           line-height: 1.6;
+        }
+        
+        /* Loading animation */
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .blog-post-content {
+          animation: fadeIn 0.5s ease-out;
         }
       `}</style>
       

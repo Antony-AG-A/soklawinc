@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import NewsLoader from './NewsLoader';
 
 const News = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [blogHandyLoaded, setBlogHandyLoaded] = useState(false);
   const blogHandyInitialized = useRef(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -141,22 +144,13 @@ const News = () => {
           e.preventDefault();
           e.stopPropagation();
           
-          // Find the URL to open
-          let urlToOpen = '';
+          // Get post index for navigation
+          const posts = blogContainer.querySelectorAll('a[href], .bh-post, .post, article, .blog-post, [class*="post"]');
+          const postIndex = Array.from(posts).indexOf(clickableElement);
           
-          if (element.tagName === 'A') {
-            urlToOpen = (element as HTMLAnchorElement).href;
-          } else {
-            // Look for a link inside the element
-            const innerLink = element.querySelector('a[href]') as HTMLAnchorElement;
-            if (innerLink) {
-              urlToOpen = innerLink.href;
-            }
-          }
-          
-          if (urlToOpen && urlToOpen !== '#' && urlToOpen !== 'javascript:void(0)') {
-            // Open in new tab to prevent page refresh
-            window.open(urlToOpen, '_blank', 'noopener,noreferrer');
+          if (postIndex >= 0) {
+            // Navigate to blog post page using React Router (no page refresh)
+            navigate(`/blog/bloghandy-${postIndex}`);
           }
         }, { passive: false });
       });
@@ -210,10 +204,7 @@ const News = () => {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-600"></div>
-            <span className="ml-4 text-gray-600">Loading latest news...</span>
-          </div>
+          <NewsLoader message="Loading latest news and updates..." />
         )}
 
         {/* BlogHandy Container */}
