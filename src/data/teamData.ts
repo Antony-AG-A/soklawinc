@@ -63,7 +63,7 @@ export const teamMembers: TeamMember[] = [
     name: 'Faith Simiyu',
     role: 'Partner',
     specialization: 'Family Law & Real Estate',
-    image: 'https://images.pexels.com/photos/3760854/pexels-photo-3760854.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    image: 'https://i.postimg.cc/6QCW50zn/Whats-App-Image-2025-08-13-at-04-23-08.jpg',
     email: 'fsimiyu@soklaw.co.ke',
     phone: '+254 700 123 457',
     isPartner: true,
