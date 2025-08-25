@@ -134,7 +134,7 @@ ${formData.message}
       city: 'Nairobi Office',
       address: 'Upper Hill, ABC Place, 5th Floor\nWaiyaki Way, Nairobi',
       phone: '+254 700 123 456',
-      email: 'nairobi@soklaw.co.ke'
+      email: 'Info@soklaw.co.ke'
     },
   ];
 
