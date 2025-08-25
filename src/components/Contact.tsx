@@ -363,7 +363,7 @@ ${formData.message}
                     <AlertCircle className="w-5 h-5 mt-0.5 text-red-600 flex-shrink-0" />
                     <div>
                       <p className="font-medium">Something went wrong.</p>
-                      <p className="text-sm">Please try again or contact us directly at nairobi@soklaw.co.ke</p>
+                      <p className="text-sm">Please try again or contact us directly at Info@soklaw.co.ke</p>
                     </div>
                   </div>
                 )}
