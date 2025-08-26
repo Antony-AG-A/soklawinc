@@ -3,11 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mail, Phone, Linkedin, Award, BookOpen, Scale } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { teamMembers, TeamMember } from '../data/teamData';
+import { teamMembers, TeamMember, getTeamByCategory } from '../data/teamData';
 
 const TeamPage = () => {
   const navigate = useNavigate();
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+  const teamByCategory = getTeamByCategory();
 
   // Handle back navigation using browser history
   const handleBackToHome = () => {
@@ -48,82 +49,89 @@ const TeamPage = () => {
             <div className="w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6"></div>
           </div>
 
-          {/* Team Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamMembers.map((member) => (
-              <div
-                key={member.id}
-                onClick={() => handleMemberClick(member)}
-                className="modern-card overflow-hidden transform hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
-              >
-                {/* Image */}
-                <div className="relative overflow-hidden">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="team-img group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
+          {/* Team Categories */}
+          {Object.entries(teamByCategory).map(([category, members]) => (
+            <div key={category} className="mb-16">
+              <h2 className="text-3xl font-bold mb-8 text-center">
+                {category}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {members.map((member) => (
+                  <div
+                    key={member.id}
+                    onClick={() => handleMemberClick(member)}
+                    className="modern-card overflow-hidden transform hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
+                  >
+                    {/* Image */}
+                    <div className="relative overflow-hidden">
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="team-img group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </div>
 
-                {/* Content */}
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold mb-2">
-                    {member.name}
-                  </h3>
-                  <p className="font-semibold text-lg mb-3 text-yellow-600">
-                    {member.role}
-                  </p>
-                  <p className="mb-4">
-                    {member.specialization}
-                  </p>
-                  <p className="text-sm text-gray-600 mb-6">
-                    {member.experience}
-                  </p>
+                    {/* Content */}
+                    <div className="p-8">
+                      <h3 className="text-2xl font-bold mb-2">
+                        {member.name}
+                      </h3>
+                      <p className="font-semibold text-lg mb-3 text-yellow-600">
+                        {member.role}
+                      </p>
+                      <p className="mb-4">
+                        {member.specialization}
+                      </p>
+                      <p className="text-sm text-gray-600 mb-6">
+                        {member.experience}
+                      </p>
 
-                  {/* Qualifications */}
-                  <div className="mb-6">
-                    <h4 className="font-semibold text-sm text-gray-900 mb-2">Qualifications</h4>
-                    <div className="flex flex-wrap gap-1">
-                      {member.qualifications.slice(0, 2).map((qual, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                      {/* Qualifications */}
+                      <div className="mb-6">
+                        <h4 className="font-semibold text-sm text-gray-900 mb-2">Qualifications</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {member.qualifications.slice(0, 2).map((qual, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                            >
+                              {qual}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Contact Icons */}
+                      <div className="flex space-x-4">
+                        <a
+                          href={`mailto:${member.email}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-yellow-600 hover:text-white transition-all duration-300 transform hover:scale-110"
                         >
-                          {qual}
-                        </span>
-                      ))}
+                          <Mail className="h-5 w-5" />
+                        </a>
+                        <a
+                          href={`tel:${member.phone}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-blue-800 hover:text-white transition-all duration-300 transform hover:scale-110"
+                        >
+                          <Phone className="h-5 w-5" />
+                        </a>
+                        <a
+                          href="#"
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-110"
+                        >
+                          <Linkedin className="h-5 w-5" />
+                        </a>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Contact Icons */}
-                  <div className="flex space-x-4">
-                    <a
-                      href={`mailto:${member.email}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-yellow-600 hover:text-white transition-all duration-300 transform hover:scale-110"
-                    >
-                      <Mail className="h-5 w-5" />
-                    </a>
-                    <a
-                      href={`tel:${member.phone}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-blue-800 hover:text-white transition-all duration-300 transform hover:scale-110"
-                    >
-                      <Phone className="h-5 w-5" />
-                    </a>
-                    <a
-                      href="#"
-                      onClick={(e) => e.stopPropagation()}
-                      className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-110"
-                    >
-                      <Linkedin className="h-5 w-5" />
-                    </a>
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
         {/* Member Profile Modal */}

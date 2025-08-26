@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Linkedin, Mail, Phone, Users } from 'lucide-react';
-import { partners } from '../data/teamData';
+import { partners, getTeamByCategory } from '../data/teamData';
 
 const Team = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const navigate = useNavigate();
   const [selectedPartner, setSelectedPartner] = useState<any>(null);
+  const teamByCategory = getTeamByCategory();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -126,7 +127,7 @@ const Team = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-          {partners.map((member, index) => (
+          {partners.slice(0, 3).map((member, index) => (
             <div
               key={index}
               className="team-card opacity-0 modern-card overflow-hidden transform hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
@@ -182,7 +183,7 @@ const Team = () => {
 
         <div className="text-center mt-16">
           <p className="text-lg mb-8 animate-fade-in">
-            Meet our complete legal team of experienced professionals
+            Meet our complete legal team organized by expertise and experience levels
           </p>
           <button 
             className="btn-primary transform hover:scale-105 shadow-lg animate-fade-in-delay flex items-center space-x-2 mx-auto"
