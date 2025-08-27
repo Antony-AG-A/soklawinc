@@ -148,7 +148,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Senior Associate',
     category: 'Associates',
     specialization: 'Litigation Management & Corporate Law',
-    image: 'https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    image: 'https://i.postimg.cc/c4q4VJLL/Whats-App-Image-2025-08-13-at-04-23-09.jpg',
     email: 'kennedy@soklaw.co.ke',
     phone: '+254 700 123 458',
     isPartner: false,
