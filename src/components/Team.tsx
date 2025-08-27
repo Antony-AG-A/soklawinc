@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Linkedin, Mail, Phone, Users } from 'lucide-react';
+import { Linkedin, Mail, Phone, Users, Award, MapPin } from 'lucide-react';
 import { partners, getTeamByCategory } from '../data/teamData';
 
 const Team = () => {
@@ -130,51 +130,109 @@ const Team = () => {
           {partners.slice(0, 3).map((member, index) => (
             <div
               key={index}
-              className="team-card opacity-0 modern-card overflow-hidden transform hover:-translate-y-2 transition-all duration-500 group cursor-pointer"
+              className="team-card opacity-0 group cursor-pointer"
               onClick={() => handlePartnerClick(member)}
             >
-              {/* Image */}
-              <div className="relative overflow-hidden">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="team-img group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
+              {/* Professional Card Design */}
+              <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-3 border border-gray-100">
+                {/* Header with gradient */}
+                <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 p-6 text-white relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+                  
+                  <div className="relative z-10 flex items-center space-x-4">
+                    <div className="relative">
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-20 h-20 rounded-full object-cover border-4 border-white/20 group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-1 text-white">
+                        {member.name}
+                      </h3>
+                      <p className="text-yellow-300 font-semibold text-sm mb-1">
+                        {member.role}
+                      </p>
+                      <p className="text-blue-100 text-sm">
+                        {member.experience}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Content */}
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-2">
-                  {member.name}
-                </h3>
-                <p className="font-semibold text-lg mb-3 text-yellow-600">
-                  {member.role}
-                </p>
-                <p className="mb-6">
-                  {member.specialization}
-                </p>
+                {/* Content Section */}
+                <div className="p-6">
+                  {/* Specialization */}
+                  <div className="mb-4">
+                    <div className="flex items-center mb-2">
+                      <Award className="h-4 w-4 text-yellow-600 mr-2" />
+                      <span className="text-sm font-semibold text-gray-700">Specialization</span>
+                    </div>
+                    <p className="text-gray-800 font-medium">
+                      {member.specialization}
+                    </p>
+                  </div>
 
-                {/* Contact Icons */}
-                <div className="flex space-x-4">
-                  <a
-                    href={`mailto:${member.email}`}
-                    className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-yellow-600 hover:text-white transition-all duration-300 transform hover:scale-110"
-                  >
-                    <Mail className="h-5 w-5" />
-                  </a>
-                  <a
-                    href={`tel:${member.phone}`}
-                    className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-blue-800 hover:text-white transition-all duration-300 transform hover:scale-110"
-                  >
-                    <Phone className="h-5 w-5" />
-                  </a>
-                  <a
-                    href="#"
-                    className="p-3 bg-gray-100 text-gray-600 rounded-full hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-110"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                  </a>
+                  {/* Key Expertise */}
+                  <div className="mb-6">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Key Expertise</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {member.expertise.slice(0, 3).map((skill, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {member.expertise.length > 3 && (
+                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                          +{member.expertise.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Contact Information */}
+                  <div className="border-t border-gray-100 pt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex space-x-3">
+                        <a
+                          href={`mailto:${member.email}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                          title="Send Email"
+                        >
+                          <Mail className="h-4 w-4" />
+                        </a>
+                        <a
+                          href={`tel:${member.phone}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition-colors duration-200"
+                          title="Call"
+                        >
+                          <Phone className="h-4 w-4" />
+                        </a>
+                        <a
+                          href="#"
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200"
+                          title="LinkedIn"
+                        >
+                          <Linkedin className="h-4 w-4" />
+                        </a>
+                      </div>
+                      <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center group/btn">
+                        View Profile
+                        <svg className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -23,41 +23,37 @@ export interface TeamMember {
 export const teamMembers: TeamMember[] = [
   {
     id: 'sospeter-opondo',
-    name: 'Sospeter Opondo',
-    role: 'Co-founder & Managing Partner',
+    name: 'Sospeter Opondo Aming\'a',
+    role: 'Co-Founder & Managing Partner',
     category: 'Partners',
-    specialization: 'International Commercial Law & Corporate Governance',
+    specialization: 'Litigation & Dispute Resolution',
     image: 'https://i.postimg.cc/MGfCq6YL/7X2A2792.jpg',
     email: 'sospeter@soklaw.co.ke',
     phone: '0205285048',
     isPartner: true,
-    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Certified Public Secretary', 'LLM (in progress)'],
-    experience: '10+ years of legal and corporate experience',
+    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Certified Public Secretary', 'Management & Customer Care Training'],
+    experience: '10+ years of legal practice',
     achievements: [
-      'Co-founder and Managing Partner at SOKLaw',
-      'Former Head of Legal Department at UAP Insurance Company Ltd',
-      'Over 7 years corporate experience at KTDA, REAL Insurance, and UAP',
-      'Currently pursuing LLM in International Commercial Law - University of Edinburgh',
-      'Published author in professional and corporate magazines',
-      'Member of Law Society of Kenya and East African Law Society'
+      'Successfully led high-profile litigation and dispute resolution matters',
+      'Headed legal departments in top organizations (KTDA, REAL Insurance, UAP Insurance)',
+      'Published articles in professional and corporate magazines',
+      'Founder of County Legal Aid Bureau (CLAB) CSR initiative',
+      'Active member of the Law Society of Kenya and East African Law Society'
     ],
-    description: 'Sospeter is a co-founder and the Managing partner at SOKLaw. He is an advocate of the High Court of Kenya with over three (3) years post-admission experience in legal practice. Prior to founding the firm, he had worked for seven (7) years in various reputable corporate organizations i.e Kenya Tea Development Authority(KTDA), REAL Insurance Company Ltd and UAP Insurance Company Ltd where he rose through the ranks to head the legal department at UAP. He holds an undergraduate degree in Law from the University of Nairobi and a post graduate diploma from Kenya School of law. He is also a Certified Public Secretary and has undergone management and customer care training at various institutions in Kenya. Sospeter is currently pursuing an LLM Degree in International Commercial Law with the University of Edinburgh. He has also authored several publications in professional and corporate magazines and digests. His legal and administrative background adds great value to the firm\'s services. He is a member of the Law Society of Kenya and the East African Law Society.',
+    description: 'Sospeter Opondo Aming\'a is the Co-Founder and Managing Partner of the Firm, where he leads the Litigation and Dispute Resolution department with a steadfast commitment to justice and the best interests of his clients. With over a decade of experience in legal practice and a strong corporate background, he brings both strategic insight and genuine compassion to every case he handles. His expertise spans litigation and out-of-court settlements in employment disputes, commercial matters, and personal injury claims. Before establishing the firm, Sospeter held senior positions in leading organizations, including Kenya Tea Development Agency (KTDA), REAL Insurance Company Ltd, and UAP Insurance Company Ltd, where he rose to head the legal department. This blend of corporate and legal experience equips him with a deep understanding of both the technical and human aspects of complex disputes. Beyond the courtroom, Sospeter is passionate about mentorship and giving back. He founded the County Legal Aid Bureau (CLAB), the firm\'s flagship Corporate Social Responsibility program, which works to make legal support accessible to underserved communities.',
     expertise: [
-      'International Commercial Law',
-      'Corporate Governance',
-      'Insurance Law',
-      'Commercial Litigation',
-      'Banking & Finance',
-      'Securities Law',
-      'Corporate Strategy',
-      'Risk Management'
+      'Litigation & Dispute Resolution',
+      'Employment Law',
+      'Commercial Law',
+      'Personal Injury Claims',
+      'Out-of-Court Settlements',
+      'Corporate Legal Advisory'
     ],
     education: [
       'University of Nairobi - Bachelor of Laws (LLB)',
-      'Kenya School of Law - Diploma in Law',
-      'University of Edinburgh - LLM in International Commercial Law (in progress)',
-      'Certified Public Secretary of Kenya',
-      'Management and Customer Care Training - Various Institutions'
+      'Kenya School of Law - Postgraduate Diploma in Law',
+      'Certified Public Secretary (CPS-K)',
+      'Specialized Training - Management & Customer Care'
     ],
     admissions: [
       'Advocate of the High Court of Kenya',
@@ -68,271 +64,195 @@ export const teamMembers: TeamMember[] = [
     languages: ['English', 'Swahili', 'Luo']
   },
   {
-    id: 'faith-simiyu',
-    name: 'Faith Simiyu',
-    role: 'Partner',
-    category: 'Partners',
-    specialization: 'Family Law & Real Estate',
-    image: 'https://i.postimg.cc/6QCW50zn/Whats-App-Image-2025-08-13-at-04-23-08.jpg',
-    email: 'fsimiyu@soklaw.co.ke',
-    phone: '+254 700 123 457',
-    isPartner: true,
-    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Master of Laws (LLM)'],
-    experience: '12+ years of legal practice',
-    achievements: [
-      'Handled over 150 family law cases',
-      'Expert in property conveyancing',
-      'Women Lawyer of the Year 2022',
-      'Published author on family law matters'
-    ],
-    description: 'Faith Simiyu is a partner at SOK Law Associates specializing in family law and real estate matters. She is known for her compassionate approach to family disputes and her expertise in property transactions.',
-    expertise: [
-      'Family Law',
-      'Real Estate Law',
-      'Property Conveyancing',
-      'Succession Law',
-      'Matrimonial Property',
-      'Child Custody'
-    ],
-    education: [
-      'University of Nairobi - Bachelor of Laws (LLB)',
-      'Kenya School of Law - Diploma in Law',
-      'University of Cape Town - Master of Laws (LLM) in Family Law'
-    ],
-    admissions: [
-      'Advocate of the High Court of Kenya',
-      'Member of Law Society of Kenya',
-      'Member of International Association of Family Lawyers'
-    ],
-    languages: ['English', 'Swahili', 'Bukusu']
-  },
-  {
     id: 'paul-kiranga',
     name: 'Paul Kiranga',
-    role: 'Associate Partner',
+    role: 'Co-Founder & Partner',
     category: 'Partners',
-    specialization: 'Criminal Defense & Constitutional Law',
+    specialization: 'Bank Securities and Conveyancing',
     image: 'https://i.postimg.cc/v8KZvBN1/Whats-App-Image-2025-07-20-at-03-11-55.jpg',
-    email: 'pkiranga@soklaw.co.ke',
-    phone: '+254 700 123 458',
+    email: 'paul@soklaw.co.ke',
+    phone: '020 528 5048',
     isPartner: true,
-    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Certificate in Human Rights'],
-    experience: '10+ years of legal practice',
+    qualifications: ['LLB (Hons)', 'Diploma in Law'],
+    experience: '5+ years in real estate, conveyancing, and bank securities practice',
     achievements: [
-      'Successfully defended over 100 criminal cases',
-      'Constitutional law expert',
-      'Human rights advocate',
-      'Pro bono legal services champion'
+      'Perfected securities for leading banks, including Bank of Baroda, Standard Chartered, and Guardian Bank',
+      'Successfully advised on high-value mergers, acquisitions, and joint ventures',
+      'Provided legal advisory on complex corporate and financing transactions',
+      'Acted for both Kenyan and international corporate clients across diverse sectors'
     ],
-    description: 'Paul Kiranga is an associate partner specializing in criminal defense and constitutional law. He is passionate about protecting individual rights and has successfully handled numerous high-profile criminal and constitutional cases.',
+    description: 'Paul Kiranga is a Co-Founder and the Partner in charge of the Bank Securities and Conveyancing Department at SOKLaw. He holds a Bachelor of Laws (LL.B) degree from the University of Nairobi (2009) and a Postgraduate Diploma in Law from the Kenya School of Law (2010). He was admitted to the Roll of Advocates in 2011. Paul has gained extensive experience in real estate and conveyancing practice, as well as the perfection of securities. He previously served as an associate in charge of the Conveyancing and Bank Securities Department at Mucheru-Oyatta & Associates Advocates, where he perfected security documents on behalf of major banks in Kenya, including Bank of Baroda (K) Limited, Standard Chartered Bank (K) Limited, and Guardian Bank Kenya Limited. In addition to banking and conveyancing, Paul has significant experience in corporate and commercial law, advising on mergers and acquisitions, joint ventures, capital markets, structured financing, intellectual property, aircraft leasing & financing, and energy law. He has successfully acted for leading Kenyan and international corporate clients.',
     expertise: [
-      'Criminal Defense',
-      'Constitutional Law',
-      'Human Rights',
-      'Public Interest Litigation',
-      'Appeals',
-      'Judicial Review'
+      'Bank Securities & Conveyancing',
+      'Real Estate Transactions',
+      'Corporate & Commercial Law',
+      'Mergers & Acquisitions',
+      'Joint Ventures',
+      'Capital Markets & Structured Financing',
+      'Intellectual Property Law',
+      'Aircraft Leasing & Financing',
+      'Energy Law'
     ],
     education: [
-      'University of Nairobi - Bachelor of Laws (LLB)',
-      'Kenya School of Law - Diploma in Law',
-      'University of Pretoria - Certificate in Human Rights Law'
+      'University of Nairobi - Bachelor of Laws (LL.B), 2009',
+      'Kenya School of Law - Postgraduate Diploma in Law, 2010'
     ],
     admissions: [
-      'Advocate of the High Court of Kenya',
-      'Member of Law Society of Kenya',
-      'Member of Kenya Human Rights Commission'
+      'Advocate of the High Court of Kenya (2011)',
+      'Member of Law Society of Kenya'
     ],
     languages: ['English', 'Swahili', 'Kikuyu']
   },
   {
-    id: 'justus-njoroge',
-    name: 'Justus Njoroge',
-    role: 'Senior Associate',
-    category: 'Associates',
-    specialization: 'Employment Law & Labor Relations',
-    image: 'https://i.postimg.cc/vmrnFQd7/7X2A2838.jpg',
-    email: 'jnjoroge@soklaw.co.ke',
-    phone: '+254 700 123 459',
-    isPartner: false,
-    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Certificate in Labor Relations'],
-    experience: '8+ years of legal practice',
+    id: 'angela-omuya',
+    name: 'Angela Omuya',
+    role: 'Partner',
+    category: 'Partners',
+    specialization: 'Legal Audits, Compliance & Data Protection Consultancy',
+    image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    email: 'angela@soklaw.co.ke',
+    phone: '+254 700 123 457',
+    isPartner: true,
+    qualifications: ['LLB (Hons)', 'CPA-K'],
+    experience: '10+ years of legal and compliance practice',
     achievements: [
-      'Employment law specialist',
-      'Successfully mediated 50+ labor disputes',
-      'Corporate training expert',
-      'Published researcher on employment matters'
+      'Led legal audits and compliance reviews for SMEs, start-ups, NGOs, and government bodies',
+      'Guided County Governments on constitutional and regulatory compliance',
+      'Served as Legal Counsel to the Judiciary for 7 years, advising on complex disputes and tribunal appeals',
+      'Contributed to national law reform and governance through work with Transparency International',
+      'Active mentor, children\'s ministry worker, and volunteer life coach'
     ],
-    description: 'Justus Njoroge is a senior associate with extensive experience in employment law and labor relations. He advises both employers and employees on workplace matters and has a strong track record in dispute resolution.',
+    description: 'Angela Omuya is a Partner at the Firm, where she leads the Legal Audits and Compliance practice. An Advocate of the High Court of Kenya and a Certified Public Accountant (CPA-K), she brings a rare blend of legal precision and regulatory insight to help non-profits, SMEs, start-ups, and government entities stay compliant while achieving their goals. Her work ranges from legal audits, data protection compliance, and due diligence to contract negotiation, dispute resolution, and governance advisory. Whether reviewing HR manuals, guiding County Governments on constitutional compliance, or helping organizations strengthen their operational frameworks, Angela delivers practical solutions that work in the real world. Her decade-long career includes seven years as Legal Counsel to the Judiciary, where she supported judges in resolving complex commercial, employment, and contractual disputes, and advised on tribunal appeals and arbitral award enforcement. This experience sharpened her analytical skills, deepened her grasp of compliance risks, and gave her unique insight into Kenya\'s legal landscape. Earlier, she worked with Transparency International, contributing to the review and reform of laws aimed at strengthening governance and accountability. Passionate about protecting and empowering children, Angela serves as a children\'s ministry worker at her church and volunteers as a life coach at MCE Children\'s Centre. Outside the office, she is an avid reader, mentor, and lifelong learner, happiest when spending quality time with family and friends.',
     expertise: [
-      'Employment Law',
-      'Labor Relations',
-      'Workplace Disputes',
-      'Employment Contracts',
-      'Disciplinary Procedures',
-      'Workers Compensation'
+      'Legal Audits & Compliance',
+      'Data Protection & Privacy',
+      'Due Diligence & Governance Advisory',
+      'Contract Negotiation',
+      'Dispute Resolution',
+      'Regulatory & Constitutional Compliance'
     ],
     education: [
-      'Kenyatta University - Bachelor of Laws (LLB)',
-      'Kenya School of Law - Diploma in Law',
-      'University of Witwatersrand - Certificate in Labor Relations'
+      'Bachelor of Laws (LLB)',
+      'Certified Public Accountant (CPA-K)'
     ],
     admissions: [
       'Advocate of the High Court of Kenya',
-      'Member of Law Society of Kenya',
-      'Certified Labor Relations Officer'
+      'Certified Public Accountant (CPA-K)',
+      'Member of Law Society of Kenya'
+    ],
+    languages: ['English', 'Swahili']
+  },
+  {
+    id: 'kennedy-muriuki',
+    name: 'Kennedy Muriuki Kiranga',
+    role: 'Senior Associate',
+    category: 'Associates',
+    specialization: 'Litigation Management & Corporate Law',
+    image: 'https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    email: 'kennedy@soklaw.co.ke',
+    phone: '+254 700 123 458',
+    isPartner: false,
+    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Notary Public', 'Commissioner for Oaths'],
+    experience: '7+ years of legal experience, 5+ years in active practice',
+    achievements: [
+      'Successfully managed litigation processes and improved turnaround times through technology adoption',
+      'Led high-value commercial and corporate transactions, including post-COVID-19 tourism recovery debenture registration',
+      'Contributed to policy development, treaty review, and constitutional litigation at the Office of the Attorney General',
+      'Strong corporate grounding through treasury operations internship at Citi N.A. Kenya'
+    ],
+    description: 'Kennedy Muriuki Kiranga is an Advocate of the High Court of Kenya, Notary Public, and Commissioner for Oaths with over seven years of legal experience and more than five years in active practice. As a Senior Associate at Simiyu, Opondo, Kiranga & Co. Advocates, he has built a solid track record in litigation, conveyancing, corporate law, and commercial transactions, serving a diverse clientele across Kenya. Kennedy\'s expertise spans litigation management, contract drafting and negotiation, perfection of securities for lending institutions, and corporate compliance. He has successfully driven process improvements through technology adoption, improved turnaround times in litigation, and played a pivotal role in high-impact transactions, including debenture registration that supported the tourism sector\'s recovery post-COVID-19. He has also worked with the Office of the Attorney General, contributing to policy development, treaty review, and constitutional litigation, and gained early corporate exposure through a treasury operations internship at Citi N.A. Kenya.',
+    expertise: [
+      'Litigation Management',
+      'Corporate Law',
+      'Conveyancing',
+      'Commercial Transactions',
+      'Contract Drafting & Negotiation',
+      'Securities & Banking Compliance',
+      'Corporate Governance'
+    ],
+    education: [
+      'University of Nairobi - Bachelor of Laws (LLB)',
+      'Kenya School of Law - Diploma in Law'
+    ],
+    admissions: [
+      'Advocate of the High Court of Kenya',
+      'Notary Public',
+      'Commissioner for Oaths',
+      'Member of Law Society of Kenya'
     ],
     languages: ['English', 'Swahili', 'Kikuyu']
+  },
+  {
+    id: 'geoffrey-otieno',
+    name: 'Geoffrey Otieno',
+    role: 'Associate Advocate',
+    category: 'Associates',
+    specialization: 'Civil, Criminal, Family & Corporate Law',
+    image: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    email: 'geoffrey@soklaw.co.ke',
+    phone: '+254 700 123 459',
+    isPartner: false,
+    qualifications: ['LLB (Hons)'],
+    experience: '4 years of legal practice',
+    achievements: [
+      'Provided legal drafting and research support in diverse practice areas',
+      'Assisted in litigation and case preparation across civil and criminal matters',
+      'Delivered reliable legal opinions and document reviews for clients',
+      'Recognized for clarity and precision in complex legal drafting'
+    ],
+    description: 'Geoffrey Otieno is a charismatic lawyer with a Bachelor of Laws (LLB) from Kenyatta University. At Simiyu, Opondo, Kiranga & Co. Advocates, he specializes in legal research, drafting, and reviewing across a broad range of practice areas, including civil, criminal, succession, family and children, contract, land, and company law matters. With four years of legal experience, Geoffrey is committed to turning legal complexity into strategic advantage, offering clients practical and well-structured legal solutions.',
+    expertise: [
+      'Civil Law',
+      'Criminal Law',
+      'Succession Law',
+      'Family & Children Law',
+      'Contract Law',
+      'Land Law',
+      'Company Law',
+      'Legal Research & Drafting'
+    ],
+    education: [
+      'Kenyatta University - Bachelor of Laws (LLB)'
+    ],
+    admissions: [
+      'Advocate of the High Court of Kenya',
+      'Member of Law Society of Kenya'
+    ],
+    languages: ['English', 'Swahili']
   },
   {
     id: 'loise-njoroge',
-    name: 'Loise Njoroge',
+    name: 'Loise Njeri Njoroge',
     role: 'Associate Advocate',
     category: 'Associates',
-    specialization: 'Intellectual Property & Technology Law',
+    specialization: 'Litigation, Corporate & Commercial Law',
     image: 'https://i.postimg.cc/Z5KYK43F/7X2A2863.jpg',
-    email: 'lnjoroge@soklaw.co.ke',
+    email: 'loise@soklaw.co.ke',
     phone: '+254 700 123 460',
     isPartner: false,
-    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Certificate in IP Law'],
-    experience: '6+ years of legal practice',
+    qualifications: ['LLB (Hons)'],
+    experience: '4+ years of legal practice',
     achievements: [
-      'IP law specialist',
-      'Technology law expert',
-      'Registered patent agent',
-      'Startup legal advisor'
+      'Successfully managed diverse litigation matters',
+      'Provided expert legal drafting and contract preparation',
+      'Skilled in negotiations and case management',
+      'Recognized for professionalism and client-focused solutions'
     ],
-    description: 'Loise Njoroge is an associate specializing in intellectual property and technology law. She advises startups, tech companies, and creative professionals on IP protection and technology-related legal matters.',
+    description: 'Loise Njeri Njoroge is a dedicated Kenyan lawyer with a Bachelor of Laws degree and over four years of experience in legal practice. She is currently part of the legal team at SOK Law Advocates, where she specializes in litigation, legal drafting, corporate, and commercial law. At SOK Law Advocates, Loise has successfully handled diverse legal matters, providing expert advice, contract preparation, pleadings, negotiations, case management, and drafting legal documents with professionalism and diligence. She is committed to upholding the highest standards of integrity and delivering practical, results-driven legal solutions to meet clients\' needs.',
     expertise: [
-      'Intellectual Property',
-      'Technology Law',
-      'Patent Law',
-      'Trademark Law',
-      'Copyright Law',
-      'Data Protection'
+      'Litigation',
+      'Corporate Law',
+      'Commercial Law',
+      'Legal Drafting',
+      'Contract Negotiation',
+      'Case Management'
     ],
     education: [
-      'Strathmore University - Bachelor of Laws (LLB)',
-      'Kenya School of Law - Diploma in Law',
-      'World Intellectual Property Organization - Certificate in IP Law'
+      'Bachelor of Laws (LLB)'
     ],
     admissions: [
       'Advocate of the High Court of Kenya',
-      'Member of Law Society of Kenya',
-      'Registered Patent Agent'
-    ],
-    languages: ['English', 'Swahili', 'Kikuyu']
-  },
-  {
-    id: 'shallet-wangui',
-    name: 'Shallet Wangui Katiku',
-    role: 'Legal Consultant',
-    category: 'Consultants',
-    specialization: 'Banking & Finance Law',
-    image: 'https://i.postimg.cc/cChqVtDq/7X2A2882.jpg',
-    email: 'swangui@soklaw.co.ke',
-    phone: '+254 700 123 461',
-    isPartner: false,
-    qualifications: ['LLB (Hons)', 'Diploma in Law', 'Certificate in Banking Law'],
-    experience: '5+ years of legal practice',
-    achievements: [
-      'Banking law specialist',
-      'Financial services expert',
-      'Regulatory compliance advisor',
-      'Fintech legal consultant'
-    ],
-    description: 'Shallet Wangui is a legal consultant with expertise in banking and finance law. She advises financial institutions, fintech companies, and corporate clients on regulatory compliance and financial transactions.',
-    expertise: [
-      'Banking Law',
-      'Finance Law',
-      'Regulatory Compliance',
-      'Fintech Law',
-      'Securities Law',
-      'Capital Markets'
-    ],
-    education: [
-      'University of Nairobi - Bachelor of Laws (LLB)',
-      'Kenya School of Law - Diploma in Law',
-      'London School of Economics - Certificate in Banking Law'
-    ],
-    admissions: [
-      'Advocate of the High Court of Kenya',
-      'Member of Law Society of Kenya',
-      'Certified Financial Services Lawyer'
-    ],
-    languages: ['English', 'Swahili', 'Kikuyu']
-  },
-  {
-    id: 'mary-assistant',
-    name: 'Mary Wanjiku',
-    role: 'Legal Assistant',
-    category: 'Assistants',
-    specialization: 'Administrative Support & Client Relations',
-    image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
-    email: 'mwanjiku@soklaw.co.ke',
-    phone: '+254 700 123 462',
-    isPartner: false,
-    qualifications: ['Diploma in Legal Studies', 'Certificate in Office Administration'],
-    experience: '4+ years of legal support experience',
-    achievements: [
-      'Expert in client relations',
-      'Efficient case file management',
-      'Multilingual communication skills',
-      'Administrative excellence award recipient'
-    ],
-    description: 'Mary Wanjiku provides essential administrative support and maintains excellent client relations. Her attention to detail and organizational skills ensure smooth operations across all departments.',
-    expertise: [
-      'Client Relations',
-      'Case File Management',
-      'Legal Documentation',
-      'Administrative Support',
-      'Court Filing',
-      'Appointment Scheduling'
-    ],
-    education: [
-      'Kenya Institute of Legal Studies - Diploma in Legal Studies',
-      'Technical University of Kenya - Certificate in Office Administration'
-    ],
-    admissions: [
-      'Certified Legal Assistant',
-      'Member of Kenya Legal Assistants Association'
-    ],
-    languages: ['English', 'Swahili', 'Kikuyu']
-  },
-  {
-    id: 'james-assistant',
-    name: 'James Mwangi',
-    role: 'Research Assistant',
-    category: 'Assistants',
-    specialization: 'Legal Research & Documentation',
-    image: 'https://images.pexels.com/photos/3184430/pexels-photo-3184430.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
-    email: 'jmwangi@soklaw.co.ke',
-    phone: '+254 700 123 463',
-    isPartner: false,
-    qualifications: ['Bachelor of Laws (LLB)', 'Certificate in Legal Research'],
-    experience: '3+ years of legal research experience',
-    achievements: [
-      'Legal research specialist',
-      'Case law analysis expert',
-      'Published legal articles',
-      'Database management proficiency'
-    ],
-    description: 'James Mwangi supports the legal team with comprehensive research and documentation services. His analytical skills and attention to detail contribute significantly to case preparation and legal strategy development.',
-    expertise: [
-      'Legal Research',
-      'Case Law Analysis',
-      'Legal Writing',
-      'Database Management',
-      'Statutory Interpretation',
-      'Precedent Analysis'
-    ],
-    education: [
-      'University of Nairobi - Bachelor of Laws (LLB)',
-      'Kenya School of Law - Certificate in Legal Research Methods'
-    ],
-    admissions: [
-      'Certified Legal Researcher',
-      'Member of Kenya Legal Research Association'
+      'Member of Law Society of Kenya'
     ],
     languages: ['English', 'Swahili', 'Kikuyu']
   }
