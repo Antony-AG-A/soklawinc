@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Calendar, Clock, Loader2 } from 'lucide-react';
 import NewsLoader from './NewsLoader';
 
 interface Post {
@@ -11,147 +10,6 @@ interface Post {
   html?: string;
   reading_time?: number;
 }
-
-// Article viewer component within News
-const NewsArticleViewer: React.FC<{ slug: string; onBack: () => void }> = ({ slug, onBack }) => {
-  const [article, setArticle] = useState<Post | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchArticle = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const res = await fetch(
-          `https://xelf.ghost.io/ghost/api/v3/content/posts/slug/${slug}/?key=367cdb8a8abe78fe688f751c76&fields=title,slug,excerpt,feature_image,published_at,html,reading_time`,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-            },
-            mode: 'cors',
-          }
-        );
-
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const data = await res.json();
-        setArticle(data.posts[0]);
-
-      } catch (error) {
-        console.error("Error fetching article:", error);
-        setError("Unable to load the article. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchArticle();
-  }, [slug]);
-
-  if (isLoading) {
-    return (
-      <section className="py-20" style={{ backgroundColor: '#f5f5f0' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-8 transition bg-white px-4 py-2 rounded-lg shadow-sm"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Back to News
-          </button>
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <NewsLoader message="Loading article..." variant="minimal" />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (error || !article) {
-    return (
-      <section className="py-20" style={{ backgroundColor: '#f5f5f0' }}>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-8 transition bg-white px-4 py-2 rounded-lg shadow-sm"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Back to News
-          </button>
-          <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-            <p className="text-red-600 mb-4">{error || "Article not found"}</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="py-20" style={{ backgroundColor: '#f5f5f0' }}>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 text-blue-600 hover:text-blue-800 mb-8 transition bg-white px-4 py-2 rounded-lg shadow-sm"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          Back to News
-        </button>
-
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          {article.feature_image && (
-            <img
-              src={article.feature_image}
-              alt={article.title}
-              className="w-full h-64 md:h-96 object-cover"
-            />
-          )}
-
-          <div className="p-8">
-            <header className="mb-8">
-              <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
-                {article.title}
-              </h1>
-              
-              {article.excerpt && (
-                <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                  {article.excerpt}
-                </p>
-              )}
-
-              <div className="flex items-center gap-6 text-sm text-gray-500 border-b border-gray-200 pb-6">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {new Date(article.published_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                </div>
-                {article.reading_time && (
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    {article.reading_time} min read
-                  </div>
-                )}
-              </div>
-            </header>
-
-            <div 
-              className="prose prose-lg max-w-none prose-headings:text-blue-900 prose-links:text-blue-600 prose-strong:text-blue-900 prose-p:text-gray-700"
-              dangerouslySetInnerHTML={{ __html: article.html || '' }}
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
 
 const News = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -180,12 +38,13 @@ const News = () => {
     if (sectionRef.current) {
       observer.observe(sectionRef.current);
     }
-    // If an article is selected, show the article viewer
+    // If an article is selected, show the article viewer in NewsLoader
   if (selectedArticle) {
     console.log('Rendering article viewer for:', selectedArticle); // Debug log
     return (
-      <NewsArticleViewer 
-        slug={selectedArticle} 
+      <NewsLoader 
+        variant="article" 
+        selectedArticle={selectedArticle}
         onBack={() => {
           console.log('Going back to news list'); // Debug log
           setSelectedArticle(null);
