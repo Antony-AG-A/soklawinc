@@ -39,7 +39,7 @@ const News = () => {
       try {
         setIsLoading(true);
         const res = await fetch(
-          `https://xelf.ghost.io/367cdb8a8abe78fe688f751c76/?key=367cdb8a8abe78fe688f751c76&limit=6&fields=title,slug,excerpt,feature_image,published_at`
+          `https://YOUR-GHOST-SITE.com/ghost/api/content/posts/?key=367cdb8a8abe78fe688f751c76&limit=6&fields=title,slug,excerpt,feature_image,published_at`
         );
         const data = await res.json();
         setPosts(data.posts || []);
