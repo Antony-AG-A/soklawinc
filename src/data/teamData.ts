@@ -109,7 +109,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Partner',
     category: 'Partners',
     specialization: 'Legal Audits, Compliance & Data Protection Consultancy',
-    image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    image: 'https://i.postimg.cc/SKQKDtNL/7X2A2822.jpg',
     email: 'angela@soklaw.co.ke',
     phone: '+254 700 123 457',
     isPartner: true,
