@@ -106,35 +106,35 @@ const Hero = () => {
       />
 
         {/* Hero Content */}
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12 md:mt-16 lg:mt-20">
         <div className="animate-fade-in-up">
-          <div className="min-h-[120px] sm:min-h-[140px] flex flex-col justify-center">
-            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-bold mb-3 sm:mb-4 transition-all duration-500 drop-shadow-2xl tracking-wide" 
-                style={{ fontFamily: 'Georgia, serif', color: '#FFFFFF', textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+          <div className="min-h-[100px] sm:min-h-[120px] flex flex-col justify-center mb-4 sm:mb-6">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 transition-all duration-500 drop-shadow-2xl tracking-wide leading-tight" 
+                style={{ fontFamily: 'Georgia, serif', color: '#FFFFFF', textShadow: '3px 3px 6px rgba(0,0,0,0.9)' }}>
               {slides[currentSlide].title}
             </h3>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-yellow-200 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed transition-all duration-500 drop-shadow-xl font-semibold" 
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-yellow-100 mb-8 sm:mb-10 max-w-4xl mx-auto leading-relaxed transition-all duration-500 drop-shadow-xl font-medium" 
                style={{ fontFamily: 'system-ui, -apple-system, sans-serif', textShadow: '2px 2px 0px #654321, 3px 3px 6px rgba(0,0,0,0.9)' }}>
               {slides[currentSlide].description}
             </p>
           </div>
         </div>
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center animate-fade-in-up-delay">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center animate-fade-in-up-delay">
           <button
             onClick={scrollToContact}
-            className="group btn-primary flex items-center space-x-2 transform hover:scale-105 shadow-lg px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
+            className="group flex items-center space-x-3 transform hover:scale-105 shadow-2xl px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-full hover:from-blue-700 hover:to-blue-800 transition-all duration-300 border-2 border-blue-500 hover:border-blue-400"
           >
-            <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
             <span>Get Legal Consultation</span>
-            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 group-hover:translate-x-1 transition-transform" />
           </button>
           <button
             onClick={scrollToServices}
-            className="group btn-outline flex items-center space-x-2 transform hover:scale-105 shadow-lg px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base border-2 border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300"
+            className="group flex items-center space-x-3 transform hover:scale-105 shadow-2xl px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-semibold border-2 border-white text-white rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 backdrop-blur-sm"
           >
             <span>Our Services</span>
-            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
