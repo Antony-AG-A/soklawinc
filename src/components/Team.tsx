@@ -133,65 +133,41 @@ const Team = () => {
               className="team-card opacity-0 group cursor-pointer"
               onClick={() => handlePartnerClick(member)}
             >
-              {/* Simple Clean Card Design */}
-              <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2">
+              {/* Portrait-style Card Design like the image */}
+              <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2 max-w-sm mx-auto">
                 
-                {/* Image Section */}
-                <div className="p-6 pb-0">
-                  <div className="w-32 h-32 mx-auto relative">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="w-full h-full rounded-full object-cover shadow-lg group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-3 border-white"></div>
-                  </div>
+                {/* Large Portrait Image */}
+                <div className="aspect-[4/5] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
 
-                {/* Content Section */}
-                <div className="p-6 text-center">
-                  {/* Name and Role */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">
+                {/* Content Section with Light Background */}
+                <div className="bg-gray-50 p-6 text-left">
+                  {/* Name - Large and Bold */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">
                     {member.name}
                   </h3>
-                  <p className="text-blue-600 font-semibold mb-3">
+                  
+                  {/* Role - Prominent */}
+                  <p className="text-lg font-semibold text-gray-700 mb-3">
                     {member.role}
                   </p>
                   
-                  {/* Specialization */}
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+                  {/* Specialization - Clean and readable */}
+                  <p className="text-gray-600 mb-6 leading-relaxed">
                     {member.specialization}
                   </p>
 
-                  {/* Experience Badge */}
-                  <div className="inline-flex items-center px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700 mb-4">
-                    <Award className="h-4 w-4 mr-1" />
-                    {member.experience}
-                  </div>
-
-                  {/* Top Expertise Tags */}
-                  <div className="flex flex-wrap justify-center gap-2 mb-6">
-                    {member.expertise.slice(0, 2).map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                    {member.expertise.length > 2 && (
-                      <span className="px-3 py-1 bg-yellow-50 text-yellow-700 rounded-full text-xs font-medium">
-                        +{member.expertise.length - 2} more
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Contact Actions */}
-                  <div className="flex justify-center space-x-3 pt-4 border-t border-gray-100">
+                  {/* Contact Icons - Simple and clean like the image */}
+                  <div className="flex space-x-4">
                     <a
                       href={`mailto:${member.email}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                      className="w-12 h-12 flex items-center justify-center bg-gray-200 hover:bg-blue-600 hover:text-white rounded-lg transition-all duration-300"
                       title="Send Email"
                     >
                       <Mail className="h-5 w-5" />
@@ -199,7 +175,7 @@ const Team = () => {
                     <a
                       href={`tel:${member.phone}`}
                       onClick={(e) => e.stopPropagation()}
-                      className="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg transition-all duration-200"
+                      className="w-12 h-12 flex items-center justify-center bg-gray-200 hover:bg-green-600 hover:text-white rounded-lg transition-all duration-300"
                       title="Call"
                     >
                       <Phone className="h-5 w-5" />
@@ -207,18 +183,11 @@ const Team = () => {
                     <a
                       href="#"
                       onClick={(e) => e.stopPropagation()}
-                      className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                      className="w-12 h-12 flex items-center justify-center bg-gray-200 hover:bg-blue-600 hover:text-white rounded-lg transition-all duration-300"
                       title="LinkedIn"
                     >
                       <Linkedin className="h-5 w-5" />
                     </a>
-                  </div>
-
-                  {/* View Profile Indicator */}
-                  <div className="mt-4 text-center">
-                    <span className="text-sm text-gray-400 group-hover:text-blue-600 transition-colors">
-                      Click to view full profile →
-                    </span>
                   </div>
                 </div>
               </div>
