@@ -67,7 +67,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative h-[70vh] sm:h-screen flex items-center justify-center overflow-hidden"
+      className="relative h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Background Images */}
       {slides.map((slide, index) => (
@@ -77,11 +77,18 @@ const Hero = () => {
             index === currentSlide ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <img
-            src={slide.image}
-            alt={slide.title}
-            className="w-full h-full object-cover object-center max-h-[70vh] sm:max-h-full"
-          />
+          <div className="w-full h-full relative">
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover object-center"
+              style={{
+                objectPosition: 'center center',
+                minHeight: '100%',
+                minWidth: '100%'
+              }}
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/60"></div>
         </div>
       ))}
@@ -101,50 +108,70 @@ const Hero = () => {
         {/* Hero Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="animate-fade-in-up">
-          <div className="min-h-[140px] flex flex-col justify-center">
-            <h3 className="text-xl md:text-2xl lg:text-4xl font-bold mb-4 transition-all duration-500 drop-shadow-2xl tracking-wide" 
+          <div className="min-h-[120px] sm:min-h-[140px] flex flex-col justify-center">
+            <h3 className="text-lg sm:text-xl md:text-2xl lg:text-4xl font-bold mb-3 sm:mb-4 transition-all duration-500 drop-shadow-2xl tracking-wide" 
                 style={{ fontFamily: 'Georgia, serif', color: '#FFFFFF', textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
               {slides[currentSlide].title}
             </h3>
-            <p className="text-base md:text-lg lg:text-xl text-yellow-200 mb-8 max-w-3xl mx-auto leading-relaxed transition-all duration-500 drop-shadow-xl font-semibold" 
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-yellow-200 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed transition-all duration-500 drop-shadow-xl font-semibold" 
                style={{ fontFamily: 'system-ui, -apple-system, sans-serif', textShadow: '2px 2px 0px #654321, 3px 3px 6px rgba(0,0,0,0.9)' }}>
               {slides[currentSlide].description}
             </p>
           </div>
         </div>
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up-delay">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center animate-fade-in-up-delay">
           <button
             onClick={scrollToContact}
-            className="group btn-primary flex items-center space-x-2 transform hover:scale-105 shadow-lg"
+            className="group btn-primary flex items-center space-x-2 transform hover:scale-105 shadow-lg px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300"
           >
-            <Phone className="h-5 w-5" />
+            <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
             <span>Get Legal Consultation</span>
-            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
           </button>
           <button
             onClick={scrollToServices}
-            className="group btn-outline flex items-center space-x-2 transform hover:scale-105 shadow-lg"
+            className="group btn-outline flex items-center space-x-2 transform hover:scale-105 shadow-lg px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base border-2 border-white text-white rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300"
           >
             <span>Our Services</span>
-            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>
 
       {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+      <div className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+            className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
               index === currentSlide ? 'bg-white' : 'bg-white/50'
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
+
+      {/* CSS for animations */}
+      <style jsx>{`
+        .animate-fade-in-up {
+          animation: fadeInUp 1s ease-out;
+        }
+        .animate-fade-in-up-delay {
+          animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </section>
   );
 };
