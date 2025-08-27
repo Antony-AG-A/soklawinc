@@ -188,7 +188,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Associate Advocate',
     category: 'Associates',
     specialization: 'Civil, Criminal, Family & Corporate Law',
-    image: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    image: 'https://i.postimg.cc/PqFdKX7h/7X2A2896.jpg',
     email: 'geoffrey@soklaw.co.ke',
     phone: '+254 700 123 459',
     isPartner: false,
