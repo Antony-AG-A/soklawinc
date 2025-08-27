@@ -299,7 +299,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Receptionist',
     category: 'Assistants',
     specialization: 'Client Relations & Administrative Support',
-    image: 'https://images.pexels.com/photos/3184394/pexels-photo-3184394.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    image: 'https://i.postimg.cc/FFVBQW9k/7-X2-A2882-1.jpg',
     email: 'shallet@soklaw.co.ke',
     phone: '+254 700 123 462',
     isPartner: false,
