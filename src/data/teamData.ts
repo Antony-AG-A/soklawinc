@@ -255,6 +255,79 @@ export const teamMembers: TeamMember[] = [
       'Member of Law Society of Kenya'
     ],
     languages: ['English', 'Swahili', 'Kikuyu']
+  },
+  {
+    id: 'justus-njoroge',
+    name: 'Justus Njoroge',
+    role: 'Conveyancing Clerk',
+    category: 'Consultants',
+    specialization: 'Conveyancing & Property Documentation',
+    image: 'https://images.pexels.com/photos/3184639/pexels-photo-3184639.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    email: 'justus@soklaw.co.ke',
+    phone: '+254 700 123 461',
+    isPartner: false,
+    qualifications: ['Diploma in Legal Studies', 'Certificate in Conveyancing Practice'],
+    experience: '3+ years in conveyancing and property documentation',
+    achievements: [
+      'Managed efficient processing of property transfer documents',
+      'Assisted in complex conveyancing transactions and due diligence',
+      'Maintained accurate property records and client documentation',
+      'Supported attorneys in property law matters with precision and attention to detail'
+    ],
+    description: 'Justus Njoroge serves as a Conveyancing Clerk at SOK Law Advocates, bringing specialized expertise in property documentation and conveyancing processes. With a strong background in legal studies and focused training in conveyancing practice, he plays a crucial role in ensuring smooth property transactions for the firm\'s clients. His attention to detail and thorough understanding of property law procedures make him an invaluable asset to the conveyancing department. Justus works closely with the legal team to prepare, review, and process all property-related documentation, ensuring compliance with legal requirements and timely completion of transactions.',
+    expertise: [
+      'Conveyancing Procedures',
+      'Property Documentation',
+      'Title Search & Verification',
+      'Property Transfer Processing',
+      'Legal Document Preparation',
+      'Property Records Management'
+    ],
+    education: [
+      'Diploma in Legal Studies',
+      'Certificate in Conveyancing Practice'
+    ],
+    admissions: [
+      'Registered Conveyancing Clerk',
+      'Member of Professional Legal Clerks Association'
+    ],
+    languages: ['English', 'Swahili', 'Kikuyu']
+  },
+  {
+    id: 'shallet-katiku',
+    name: 'Shallet Wangui Katiku',
+    role: 'Receptionist',
+    category: 'Assistants',
+    specialization: 'Client Relations & Administrative Support',
+    image: 'https://images.pexels.com/photos/3184394/pexels-photo-3184394.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    email: 'shallet@soklaw.co.ke',
+    phone: '+254 700 123 462',
+    isPartner: false,
+    qualifications: ['Certificate in Customer Service', 'Diploma in Business Administration'],
+    experience: '2+ years in client service and administrative support',
+    achievements: [
+      'Maintained excellent client satisfaction through professional front-desk service',
+      'Efficiently managed appointment scheduling and client communications',
+      'Provided multilingual support to diverse clientele',
+      'Streamlined office administrative processes for improved efficiency'
+    ],
+    description: 'Shallet Wangui Katiku is the welcoming face of SOK Law Advocates, serving as the firm\'s Receptionist and first point of contact for clients. With her warm personality and professional approach, she ensures that every client receives exceptional service from the moment they walk through the door or call the office. Shallet brings strong administrative skills and customer service expertise to her role, managing appointment scheduling, client inquiries, and general office coordination with efficiency and care. Her multilingual abilities and cultural sensitivity make her particularly effective in serving the firm\'s diverse clientele, contributing significantly to the positive client experience that SOK Law is known for.',
+    expertise: [
+      'Client Relations',
+      'Administrative Support',
+      'Appointment Scheduling',
+      'Multi-line Phone Management',
+      'Office Coordination',
+      'Customer Service Excellence'
+    ],
+    education: [
+      'Diploma in Business Administration',
+      'Certificate in Customer Service'
+    ],
+    admissions: [
+      'Certified Customer Service Professional'
+    ],
+    languages: ['English', 'Swahili', 'Kikuyu']
   }
 ];
 
