@@ -182,13 +182,19 @@ const News = () => {
     }
     // If an article is selected, show the article viewer
   if (selectedArticle) {
+    console.log('Rendering article viewer for:', selectedArticle); // Debug log
     return (
       <NewsArticleViewer 
         slug={selectedArticle} 
-        onBack={() => setSelectedArticle(null)} 
+        onBack={() => {
+          console.log('Going back to news list'); // Debug log
+          setSelectedArticle(null);
+        }} 
       />
     );
   }
+
+  console.log('Rendering news grid, posts count:', posts.length); // Debug log
 
   return () => observer.disconnect();
   }, []);
@@ -282,7 +288,10 @@ const News = () => {
               <div
                 key={post.slug}
                 className="news-card bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer transition transform hover:-translate-y-1 hover:shadow-xl"
-                onClick={() => setSelectedArticle(post.slug)}
+                onClick={() => {
+                  console.log('Clicked article:', post.slug); // Debug log
+                  setSelectedArticle(post.slug);
+                }}
               >
                 {post.feature_image && (
                   <img
@@ -295,9 +304,21 @@ const News = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-blue-900 mb-2">{post.title}</h3>
                   <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                  <p className="text-sm text-gray-400">
-                    {new Date(post.published_at).toLocaleDateString()}
-                  </p>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-gray-400">
+                      {new Date(post.published_at).toLocaleDateString()}
+                    </p>
+                    <button 
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium transition"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent double-click
+                        console.log('Button clicked for:', post.slug);
+                        setSelectedArticle(post.slug);
+                      }}
+                    >
+                      Read More →
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
