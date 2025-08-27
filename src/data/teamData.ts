@@ -262,7 +262,7 @@ export const teamMembers: TeamMember[] = [
     role: 'Conveyancing Clerk',
     category: 'Consultants',
     specialization: 'Conveyancing & Property Documentation',
-    image: 'https://images.pexels.com/photos/3184639/pexels-photo-3184639.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop',
+    image: 'https://i.postimg.cc/ncYZgYW3/7X2A2853.jpg',
     email: 'justus@soklaw.co.ke',
     phone: '+254 700 123 461',
     isPartner: false,
