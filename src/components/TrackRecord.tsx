@@ -9,7 +9,7 @@ const WhyChooseUs = () => {
     {
       title: 'Expert Legal Team',
       description: 'Our seasoned attorneys bring decades of combined experience and specialized knowledge to every case.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face',
+      image: 'https://i.postimg.cc/MKgFxHnv/7-X2-A2913-2.jpg',
       color: 'bg-gradient-to-br from-yellow-400 to-orange-500',
       stat: '25+',
       statLabel: 'Years Experience'
