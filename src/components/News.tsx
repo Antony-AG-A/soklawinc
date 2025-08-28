@@ -119,6 +119,12 @@ const News = () => {
     navigate(`/blog/${post.slug}`);
   };
 
+  // Handle view all articles click
+  const handleViewAllClick = () => {
+    // Navigate to the blog page that shows all articles
+    navigate('/blog');
+  };
+
   // Format date for display
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -280,8 +286,10 @@ const News = () => {
         {!isLoading && !error && posts.length > 0 && (
           <div className="text-center mt-12">
             <button
-              onClick={() => navigate('/blog')}
+              onClick={handleViewAllClick}
               className="inline-flex items-center space-x-2 bg-gradient-to-r from-yellow-600 to-yellow-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-yellow-700 hover:to-yellow-600 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
+              type="button"
+              aria-label="View all articles"
             >
               <span>View All Articles</span>
               <ExternalLink className="h-5 w-5" />
