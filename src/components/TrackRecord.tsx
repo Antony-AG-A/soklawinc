@@ -9,7 +9,7 @@ const WhyChooseUs = () => {
     {
       title: 'Expert Legal Team',
       description: 'Our seasoned attorneys bring decades of combined experience and specialized knowledge to every case.',
-      image: 'https://i.postimg.cc/mgs2kbqg/7X2A2913.jpg',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face',
       color: 'bg-gradient-to-br from-yellow-400 to-orange-500',
       stat: '25+',
       statLabel: 'Years Experience'
@@ -17,7 +17,7 @@ const WhyChooseUs = () => {
     {
       title: '24/7 Client Support',
       description: 'Round-the-clock availability ensures you always have access to legal guidance when you need it most.',
-      image: 'https://i.postimg.cc/tg70CwXg/7X2A2882.jpg',
+      image: 'https://images.unsplash.com/photo-1553484771-371a605b060b?w=400&h=300&fit=crop',
       color: 'bg-gradient-to-br from-green-400 to-blue-500',
       stat: '24/7',
       statLabel: 'Availability'
@@ -92,18 +92,29 @@ const WhyChooseUs = () => {
               <div key={index} className="reason-card opacity-0 relative group">
                 <div className="modern-card overflow-hidden transform hover:-translate-y-2 transition-all duration-500 group-hover:shadow-2xl">
                   {/* Image Section */}
-                  <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden bg-gray-100">
                     <img 
                       src={reason.image} 
                       alt={reason.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.style.backgroundImage = `linear-gradient(135deg, ${reason.color.includes('yellow') ? '#f59e0b, #ea580c' : reason.color.includes('green') ? '#10b981, #3b82f6' : reason.color.includes('purple') ? '#a855f7, #ec4899' : '#3b82f6, #6366f1'})`;
+                        e.target.parentElement.style.display = 'flex';
+                        e.target.parentElement.style.alignItems = 'center';
+                        e.target.parentElement.style.justifyContent = 'center';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'text-white text-6xl font-bold';
+                        placeholder.textContent = reason.title.charAt(0);
+                        e.target.parentElement.appendChild(placeholder);
+                      }}
                     />
-                    <div className={`absolute inset-0 ${reason.color} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}></div>
+                    <div className={`absolute inset-0 ${reason.color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`}></div>
                     
                     {/* Stat Overlay */}
-                    <div className="absolute top-4 right-4 bg-white/90 rounded-lg px-3 py-2 backdrop-blur-sm">
+                    <div className="absolute top-4 right-4 bg-white/95 rounded-lg px-3 py-2 backdrop-blur-sm shadow-lg border border-white/20">
                       <div className="text-2xl font-bold text-gray-900">{displayStat}</div>
-                      <div className="text-xs text-gray-600">{reason.statLabel}</div>
+                      <div className="text-xs text-gray-600 font-medium">{reason.statLabel}</div>
                     </div>
                   </div>
 
