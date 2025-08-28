@@ -1,44 +1,42 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Trophy, DollarSign, Scale, TrendingUp } from 'lucide-react';
 
-const TrackRecord = () => {
+const WhyChooseUs = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
-  const [countTrigger, setCountTrigger] = useState(0); // used to re-trigger the count
+  const [countTrigger, setCountTrigger] = useState(0);
 
-  const achievements = [
+  const reasons = [
     {
-      icon: Trophy,
-      value: 500,
-      suffix: '+',
-      label: 'Cases Won',
-      description: 'Successfully resolved legal matters',
-      color: 'bg-gradient-to-br from-yellow-400 to-orange-500'
+      title: 'Expert Legal Team',
+      description: 'Our seasoned attorneys bring decades of combined experience and specialized knowledge to every case.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face',
+      color: 'bg-gradient-to-br from-yellow-400 to-orange-500',
+      stat: '25+',
+      statLabel: 'Years Experience'
     },
     {
-      icon: DollarSign,
-      value: 50,
-      suffix: 'B+',
-      prefix: 'KSh ',
-      label: 'Value Secured',
-      description: 'Total value recovered for clients',
-      color: 'bg-gradient-to-br from-green-400 to-blue-500'
+      title: '24/7 Client Support',
+      description: 'Round-the-clock availability ensures you always have access to legal guidance when you need it most.',
+      image: 'https://images.unsplash.com/photo-1553484771-371a605b060b?w=400&h=300&fit=crop',
+      color: 'bg-gradient-to-br from-green-400 to-blue-500',
+      stat: '24/7',
+      statLabel: 'Availability'
     },
     {
-      icon: Scale,
-      value: 25,
-      suffix: '+',
-      label: 'Landmark Cases',
-      description: 'Precedent-setting legal victories',
-      color: 'bg-gradient-to-br from-purple-400 to-pink-500'
+      title: 'Proven Track Record',
+      description: 'Consistently delivering favorable outcomes through strategic litigation and skilled negotiation.',
+      image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=300&fit=crop',
+      color: 'bg-gradient-to-br from-purple-400 to-pink-500',
+      stat: '95%',
+      statLabel: 'Success Rate'
     },
     {
-      icon: TrendingUp,
-      value: 98,
-      suffix: '%',
-      label: 'Success Rate',
-      description: 'Exceptional track record',
-      color: 'bg-gradient-to-br from-blue-400 to-indigo-500'
+      title: 'Personalized Approach',
+      description: 'Every client receives individualized attention with legal strategies tailored to their unique situation.',
+      image: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400&h=300&fit=crop',
+      color: 'bg-gradient-to-br from-blue-400 to-indigo-500',
+      stat: '1:1',
+      statLabel: 'Personal Attention'
     }
   ];
 
@@ -49,8 +47,8 @@ const TrackRecord = () => {
           const isVisible = entry.isIntersecting;
           setVisible(isVisible);
           if (isVisible) {
-            setCountTrigger((prev) => prev + 1); // trigger recount
-            const cards = entry.target.querySelectorAll('.track-card');
+            setCountTrigger((prev) => prev + 1);
+            const cards = entry.target.querySelectorAll('.reason-card');
             cards.forEach((card, index) => {
               setTimeout(() => {
                 card.classList.add('animate-fade-in-up');
@@ -69,76 +67,117 @@ const TrackRecord = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Slower Count up animation
-  const useCountUp = (end: number, trigger: number, duration = 3000) => {
-    const [count, setCount] = useState(0);
-
-    useEffect(() => {
-      let current = 0;
-      const frameDuration = 30;
-      const totalFrames = Math.round(duration / frameDuration);
-      const increment = end / totalFrames;
-
-      const interval = setInterval(() => {
-        current += increment;
-        if (current >= end) {
-          setCount(end);
-          clearInterval(interval);
-        } else {
-          setCount(Math.round(current));
-        }
-      }, frameDuration);
-
-      return () => clearInterval(interval);
-    }, [end, trigger]); // trigger causes re-run
-
-    return count;
-  };
-
   return (
     <section ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 animate-fade-in">
-            Our Track Record
+            Why Choose Us
           </h2>
           <p className="text-xl max-w-3xl mx-auto animate-fade-in-delay">
-            Numbers that speak to our commitment to excellence and our clients' success
+            Discover the reasons why clients trust us with their most important legal matters
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6 animate-scale-in"></div>
         </div>
 
+        {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {achievements.map((achievement, index) => {
-            const IconComponent = achievement.icon;
-            const count = useCountUp(achievement.value, countTrigger);
-
+          {reasons.map((reason, index) => {
+            const displayStat = typeof reason.stat === 'string' ? reason.stat : 
+                               (reason.stat === 95 ? `${Math.round(visible ? 95 : 0)}%` : 
+                                reason.stat === 25 ? `${Math.round(visible ? 25 : 0)}+` : reason.stat);
+            
             return (
-              <div key={index} className="track-card opacity-0 relative group">
-                <div className="modern-card p-8 text-center transform hover:-translate-y-2 transition-all duration-500 group-hover:shadow-2xl">
-                  <div className={`w-20 h-20 ${achievement.color} rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <IconComponent className="h-10 w-10 text-white" />
+              <div key={index} className="reason-card opacity-0 relative group">
+                <div className="modern-card overflow-hidden transform hover:-translate-y-2 transition-all duration-500 group-hover:shadow-2xl">
+                  {/* Image Section */}
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={reason.image} 
+                      alt={reason.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className={`absolute inset-0 ${reason.color} opacity-20 group-hover:opacity-30 transition-opacity duration-300`}></div>
+                    
+                    {/* Stat Overlay */}
+                    <div className="absolute top-4 right-4 bg-white/90 rounded-lg px-3 py-2 backdrop-blur-sm">
+                      <div className="text-2xl font-bold text-gray-900">{displayStat}</div>
+                      <div className="text-xs text-gray-600">{reason.statLabel}</div>
+                    </div>
                   </div>
 
-                  <div className="text-4xl font-bold mb-2">
-                    {achievement.prefix || ''}
-                    {count}
-                    {achievement.suffix || ''}
+                  {/* Content Section */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-3">
+                      {reason.title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {reason.description}
+                    </p>
                   </div>
-
-                  <h3 className="text-xl font-semibold mb-3">
-                    {achievement.label}
-                  </h3>
-
-                  <p>{achievement.description}</p>
                 </div>
               </div>
             );
           })}
         </div>
       </div>
+
+      <style jsx>{`
+        .modern-card {
+          background: white;
+          border-radius: 1rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            transform: scaleX(0);
+          }
+          to {
+            transform: scaleX(1);
+          }
+        }
+
+        .animate-fade-in {
+          animation: fadeIn 1s ease-out;
+        }
+
+        .animate-fade-in-delay {
+          animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .animate-scale-in {
+          animation: scaleIn 1s ease-out 0.6s both;
+        }
+      `}</style>
     </section>
   );
 };
 
-export default TrackRecord;
+export default WhyChooseUs;
