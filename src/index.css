@@ -693,6 +693,195 @@ html {
   }
 }
 
+/* Enhanced Responsive Design */
+
+/* Mobile First Approach - Base styles for mobile */
+@media (max-width: 320px) {
+  .hero-content h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.3;
+  }
+  
+  .hero-content p {
+    font-size: 0.875rem !important;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-outline {
+    padding: 12px 20px;
+    font-size: 0.875rem;
+    min-height: 48px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (min-width: 321px) and (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 1.75rem !important;
+    line-height: 1.3;
+  }
+  
+  .hero-content p {
+    font-size: 1rem !important;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-outline {
+    padding: 14px 24px;
+    font-size: 1rem;
+    min-height: 52px;
+  }
+}
+
+/* Large Mobile Devices */
+@media (min-width: 481px) and (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem !important;
+    line-height: 1.2;
+  }
+  
+  .hero-content p {
+    font-size: 1.125rem !important;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-outline {
+    padding: 16px 28px;
+    font-size: 1rem;
+    min-height: 56px;
+  }
+}
+
+/* Tablet Devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-content h1 {
+    font-size: 2.5rem !important;
+    line-height: 1.2;
+  }
+  
+  .hero-content p {
+    font-size: 1.25rem !important;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-outline {
+    padding: 18px 32px;
+    font-size: 1.125rem;
+    min-height: 60px;
+  }
+}
+
+/* Desktop and larger */
+@media (min-width: 1025px) {
+  .hero-content h1 {
+    font-size: 3rem !important;
+    line-height: 1.1;
+  }
+  
+  .hero-content p {
+    font-size: 1.5rem !important;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-outline {
+    padding: 20px 36px;
+    font-size: 1.125rem;
+    min-height: 64px;
+  }
+}
+
+/* News Cards Responsive Improvements */
+.news-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.news-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 640px) {
+  .news-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .news-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Button Hover States Enhancement */
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.3);
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .btn-outline:hover {
+    transform: none;
+  }
+  
+  .news-card:hover {
+    transform: none;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .hero-img,
+  .about-img,
+  .team-img,
+  .news-img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .animate-spin {
+    animation: none;
+  }
+}
+
+/* Focus states for keyboard navigation */
+.btn-primary:focus,
+.btn-secondary:focus,
+.btn-outline:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.news-card:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 1rem;
+}
+
+/* Print styles */
+@media print {
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    background: none !important;
+    color: black !important;
+    border: 1px solid black !important;
+  }
+  
+  .hero-content {
+    color: black !important;
+  }
+}
 /* Blog post content styling */
 .prose {
   color: var(--brand-gray);

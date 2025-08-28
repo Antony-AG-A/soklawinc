@@ -8,13 +8,14 @@ import BlogPostPage from './pages/BlogPostPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white antialiased">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:serviceId" element={<ServiceDetailPage />} />
         <Route path="/team" element={<TeamPage />} />
         <Route path="/blog/:postId" element={<BlogPostPage />} />
+        <Route path="/blog" element={<HomePage />} />
       </Routes>
     </div>
   );

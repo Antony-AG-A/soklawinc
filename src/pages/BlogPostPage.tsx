@@ -1,217 +1,164 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, User, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Clock, Share2, BookOpen } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import NewsLoader from '../components/NewsLoader';
-import { updatePageMeta, handleExternalLinks } from '../utils/navigationUtils';
+
+interface Post {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  feature_image?: string;
+  published_at: string;
+  html: string;
+  reading_time?: number;
+  authors?: Array<{
+    name: string;
+    profile_image?: string;
+    bio?: string;
+  }>;
+  tags?: Array<{
+    name: string;
+    slug: string;
+  }>;
+}
 
 const BlogPostPage = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [blogHandyLoaded, setBlogHandyLoaded] = useState(false);
-  const [postData, setPostData] = useState<any>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [post, setPost] = useState<Post | null>(null);
 
-  // Handle back navigation using browser history
+  // Handle back navigation
   const handleBackToNews = () => {
     navigate(-1);
   };
 
+  // Fetch individual post from Ghost CMS
   useEffect(() => {
-    const loadBlogHandyForPost = async () => {
+    const fetchPost = async () => {
+      if (!postId) {
+        setError('No post ID provided');
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
         
-        const loadBlogHandy = () => {
-          // Check if BlogHandy is already loaded
-          if (window.bh_id && document.getElementById('bloghandy-script')) {
-            setBlogHandyLoaded(true);
-            setTimeout(() => displayBlogHandyPost(), 500);
-            return;
+        const ghostApiUrl = 'https://xelf.ghost.io/ghost/api/v3/content/posts/slug';
+        const apiKey = '367cdb8a8abe78fe688f751c76';
+        const params = new URLSearchParams({
+          key: apiKey,
+          include: 'tags,authors',
+          formats: 'html'
+        });
+
+        const response = await fetch(`${ghostApiUrl}/${postId}/?${params}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          mode: 'cors',
+        });
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Article not found');
           }
-
-          // Set BlogHandy ID
-          if (!window.bh_id) {
-            window.bh_id = "60HwYmcpS5PD0XNTgyMQ";
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.posts && data.posts.length > 0) {
+          setPost(data.posts[0]);
+          
+          // Update page title and meta description
+          document.title = `${data.posts[0].title} - SOK Law Associates`;
+          const metaDescription = document.querySelector('meta[name="description"]');
+          if (metaDescription) {
+            metaDescription.setAttribute('content', data.posts[0].excerpt || 'Read our latest legal insights and updates.');
           }
-
-          // Load BlogHandy script
-          let script = document.getElementById('bloghandy-script') as HTMLScriptElement;
-          if (!script) {
-            script = document.createElement('script');
-            script.id = 'bloghandy-script';
-            script.src = 'https://www.bloghandy.com/api/bh_blogengine.js';
-            script.async = true;
-            
-            script.onload = () => {
-              setBlogHandyLoaded(true);
-              // Wait for BlogHandy to initialize and load content
-              setTimeout(() => displayBlogHandyPost(), 2000);
-            };
-            
-            script.onerror = () => {
-              console.error('BlogHandy script failed to load');
-              setError('Unable to load blog content');
-              setLoading(false);
-            };
-
-            document.head.appendChild(script);
-          } else {
-            setBlogHandyLoaded(true);
-            setTimeout(() => displayBlogHandyPost(), 1000);
-          }
-        };
-
-        const displayBlogHandyPost = () => {
-          try {
-            const postIndex = parseInt(postId?.replace('bloghandy-', '') || '0');
-            let blogContainer = document.getElementById('bh-posts');
-            
-            if (!blogContainer) {
-              // Create BlogHandy container if it doesn't exist
-              blogContainer = document.createElement('div');
-              blogContainer.id = 'bh-posts';
-              blogContainer.style.display = 'none';
-              document.body.appendChild(blogContainer);
-              
-              // Retry after BlogHandy populates the container
-              setTimeout(() => displayBlogHandyPost(), 1500);
-              return;
-            }
-
-            // Look for BlogHandy posts with various selectors
-            const posts = blogContainer.querySelectorAll('.bh-post, .post, article, .blog-post, [class*="post"], div[onclick]');
-            
-            if (posts.length > postIndex) {
-              const selectedPost = posts[postIndex] as HTMLElement;
-              
-              // Extract post metadata
-              const title = selectedPost.querySelector('h1, h2, h3, .title, .bh-post-title, .post-title')?.textContent?.trim() || 'Blog Post';
-              const dateElement = selectedPost.querySelector('.date, .bh-post-date, .post-date, time');
-              const date = dateElement?.textContent?.trim() || new Date().toLocaleDateString();
-              
-              // Clone and clean the post content
-              const postContent = selectedPost.cloneNode(true) as HTMLElement;
-              
-              // Remove BlogHandy specific attributes that might interfere
-              postContent.removeAttribute('onclick');
-              postContent.style.cursor = 'default';
-              postContent.style.display = 'block';
-              postContent.style.visibility = 'visible';
-              
-              // Clean up links
-              const links = postContent.querySelectorAll('a');
-              links.forEach(link => {
-                link.removeAttribute('onclick');
-                if (link.href && !link.href.includes(window.location.origin)) {
-                  link.target = '_blank';
-                  link.rel = 'noopener noreferrer';
-                }
-              });
-              
-              // Set post data for header display
-              setPostData({
-                title,
-                date,
-                author: 'SOK Law Associates',
-                content: postContent.innerHTML
-              });
-              
-              // Insert the cleaned content
-              if (contentRef.current) {
-                contentRef.current.innerHTML = '';
-                contentRef.current.appendChild(postContent);
-              }
-              
-              setLoading(false);
-            } else {
-              // Retry a few times before giving up
-              const retryCount = parseInt(sessionStorage.getItem('bloghandy-retry') || '0');
-              if (retryCount < 3) {
-                sessionStorage.setItem('bloghandy-retry', (retryCount + 1).toString());
-                setTimeout(() => displayBlogHandyPost(), 2000);
-              } else {
-                sessionStorage.removeItem('bloghandy-retry');
-                setError('Blog post not found');
-                setLoading(false);
-              }
-            }
-          } catch (err) {
-            console.error('Error displaying BlogHandy post:', err);
-            setError('Error loading blog post');
-            setLoading(false);
-          }
-        };
-
-        loadBlogHandy();
-      } catch (err) {
-        console.error('Error in loadBlogHandyForPost:', err);
-        setError('Failed to initialize blog content');
+        } else {
+          throw new Error('Post not found');
+        }
+        
+      } catch (error) {
+        console.error("Error fetching Ghost post:", error);
+        setError(error instanceof Error ? error.message : 'Unable to load the article. Please try again later.');
+      } finally {
         setLoading(false);
       }
     };
 
-    // Clear retry count when component mounts
-    sessionStorage.removeItem('bloghandy-retry');
-    loadBlogHandyForPost();
+    fetchPost();
     
-    // Cleanup function
+    // Cleanup function to reset page title
     return () => {
-      sessionStorage.removeItem('bloghandy-retry');
+      document.title = 'SOK Law Associates';
     };
   }, [postId]);
 
-  // Update document title when post data is available
-  useEffect(() => {
-    if (postData?.title) {
-      updatePageMeta(
-        `${postData.title} - SOK Law Associates`,
-        `Read our latest article: ${postData.title}. Expert legal insights from SOK Law Associates.`
-      );
-    }
-    
-    return () => {
-      updatePageMeta('SOK Law Associates Website');
-    };
-  }, [postData]);
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
-  // Handle external links in post content
-  useEffect(() => {
-    if (contentRef.current && !loading && postData) {
-      handleExternalLinks(contentRef.current);
+  // Share functionality
+  const handleShare = async () => {
+    if (navigator.share && post) {
+      try {
+        await navigator.share({
+          title: post.title,
+          text: post.excerpt,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.log('Error sharing:', error);
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(window.location.href);
+      // You could show a toast notification here
     }
-  }, [loading, postData]);
+  };
 
   if (loading) {
     return (
       <>
         <Navbar />
-        <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
-          <NewsLoader 
-            message="Loading article content..." 
-            showIcon={false}
-          />
+        <div className="pt-20 min-h-screen bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <NewsLoader message="Loading article..." showIcon={false} />
+          </div>
         </div>
         <Footer />
       </>
     );
   }
 
-  if (error) {
+  if (error || !post) {
     return (
       <>
         <Navbar />
         <div className="pt-20 min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Blog Post Not Found</h1>
-            <p className="text-gray-600 mb-6">{error}</p>
+          <div className="text-center max-w-md mx-auto px-4">
+            <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Article Not Found</h1>
+            <p className="text-gray-600 mb-6">{error || 'The article you\'re looking for doesn\'t exist.'}</p>
             <button
               onClick={handleBackToNews}
-              className="btn-primary inline-flex items-center space-x-2"
+              className="inline-flex items-center space-x-2 bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors font-medium"
             >
               <ArrowLeft className="h-5 w-5" />
               <span>Back to News</span>
@@ -229,13 +176,13 @@ const BlogPostPage = () => {
       <div className="pt-20 min-h-screen bg-gray-50">
         {/* Navigation */}
         <div className="bg-white border-b border-gray-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
             <button
               onClick={handleBackToNews}
               className="inline-flex items-center text-yellow-600 hover:text-yellow-700 mb-4 transition-colors font-medium group"
             >
               <ArrowLeft className="h-5 w-5 mr-2 group-hover:-translate-x-1 transition-transform" />
-              Back to Previous Page
+              Back to News
             </button>
             
             {/* Breadcrumb */}
@@ -259,165 +206,133 @@ const BlogPostPage = () => {
                 News
               </button>
               <span className="mx-2">/</span>
-              <span className="text-gray-700">
-                {postData?.title || 'Article'}
+              <span className="text-gray-700 truncate">
+                {post.title}
               </span>
             </nav>
           </div>
         </div>
 
-        {/* Content Section */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <article className="bg-white rounded-lg shadow-lg p-8 lg:p-12">
-            {/* Article Header - Only show if we have post data */}
-            {postData && (
-              <header className="mb-8 pb-6 border-b border-gray-200">
-                <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-gray-900">
-                  {postData.title}
+        {/* Article Content */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+          <article className="bg-white rounded-xl md:rounded-2xl shadow-lg overflow-hidden">
+            {/* Featured Image */}
+            {post.feature_image && (
+              <div className="aspect-video md:aspect-[21/9] overflow-hidden">
+                <img
+                  src={post.feature_image}
+                  alt={post.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            <div className="p-6 md:p-8 lg:p-12">
+              {/* Tags */}
+              {post.tags && post.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+                  {post.tags.map((tag) => (
+                    <span
+                      key={tag.slug}
+                      className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full"
+                    >
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Article Header */}
+              <header className="mb-6 md:mb-8">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 md:mb-6 text-gray-900 leading-tight">
+                  {post.title}
                 </h1>
-                <div className="flex items-center text-sm text-gray-500 gap-6">
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    <span>{postData.date}</span>
+                
+                {post.excerpt && (
+                  <p className="text-lg md:text-xl text-gray-600 mb-6 leading-relaxed">
+                    {post.excerpt}
+                  </p>
+                )}
+
+                {/* Meta Information */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-200">
+                  <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-gray-500">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>{formatDate(post.published_at)}</span>
+                    </div>
+                    {post.reading_time && (
+                      <div className="flex items-center space-x-2">
+                        <Clock className="h-4 w-4" />
+                        <span>{post.reading_time} min read</span>
+                      </div>
+                    )}
+                    {post.authors && post.authors.length > 0 && (
+                      <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span>{post.authors[0].name}</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center">
-                    <User className="h-4 w-4 mr-2" />
-                    <span>{postData.author}</span>
-                  </div>
+                  
+                  {/* Share Button */}
+                  <button
+                    onClick={handleShare}
+                    className="inline-flex items-center space-x-2 text-gray-500 hover:text-yellow-600 transition-colors"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    <span className="text-sm font-medium">Share</span>
+                  </button>
                 </div>
               </header>
-            )}
-            
-            {/* BlogHandy content will be inserted here */}
-            <div 
-              ref={contentRef}
-              className="blog-post-content prose prose-lg max-w-none"
-            >
-              {/* BlogHandy content loaded dynamically */}
-            </div>
+              
+              {/* Article Content */}
+              <div 
+                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-yellow-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-900 prose-ul:text-gray-700 prose-ol:text-gray-700 prose-blockquote:border-yellow-500 prose-blockquote:text-gray-600 prose-img:rounded-lg prose-img:shadow-md"
+                dangerouslySetInnerHTML={{ __html: post.html }}
+              />
 
-            <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-              <button
-                onClick={handleBackToNews}
-                className="btn-primary inline-flex items-center space-x-2"
-              >
-                <ArrowLeft className="h-5 w-5" />
-                <span>Back to Previous Page</span>
-              </button>
+              {/* Author Bio */}
+              {post.authors && post.authors.length > 0 && post.authors[0].bio && (
+                <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-gray-200">
+                  <div className="flex items-start space-x-4">
+                    {post.authors[0].profile_image && (
+                      <img
+                        src={post.authors[0].profile_image}
+                        alt={post.authors[0].name}
+                        className="w-16 h-16 rounded-full object-cover"
+                      />
+                    )}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        About {post.authors[0].name}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        {post.authors[0].bio}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Back to News Button */}
+              <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-gray-200 text-center">
+                <button
+                  onClick={handleBackToNews}
+                  className="inline-flex items-center space-x-2 bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors font-medium"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                  <span>Back to News</span>
+                </button>
+              </div>
             </div>
           </article>
         </div>
-
-        {/* Hidden BlogHandy container */}
-        <div id="bh-posts" style={{ display: 'none' }}></div>
       </div>
-      
-      {/* BlogHandy content styling */}
-      <style jsx>{`
-        .blog-post-content {
-          animation: fadeIn 0.5s ease-out;
-        }
-        
-        .blog-post-content img {
-          border-radius: 0.5rem;
-          max-width: 100%;
-          height: auto;
-          margin: 1.5rem 0;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        
-        .blog-post-content h1,
-        .blog-post-content h2,
-        .blog-post-content h3,
-        .blog-post-content h4 {
-          color: #1e3a8a;
-          margin: 2rem 0 1rem 0;
-          line-height: 1.2;
-        }
-        
-        .blog-post-content h1 {
-          font-size: 2.5rem;
-          font-weight: 700;
-        }
-        
-        .blog-post-content h2 {
-          font-size: 2rem;
-          font-weight: 600;
-        }
-        
-        .blog-post-content h3 {
-          font-size: 1.5rem;
-          font-weight: 600;
-        }
-        
-        .blog-post-content p {
-          color: #4b5563;
-          line-height: 1.7;
-          margin-bottom: 1.5rem;
-          font-size: 1.1rem;
-        }
-        
-        .blog-post-content a {
-          color: #d97706;
-          text-decoration: underline;
-          transition: color 0.2s;
-        }
-        
-        .blog-post-content a:hover {
-          color: #b45309;
-        }
-        
-        .blog-post-content ul,
-        .blog-post-content ol {
-          margin: 1.5rem 0;
-          padding-left: 2rem;
-        }
-        
-        .blog-post-content li {
-          margin-bottom: 0.5rem;
-          color: #4b5563;
-          line-height: 1.6;
-        }
-        
-        .blog-post-content blockquote {
-          border-left: 4px solid #d97706;
-          padding-left: 1rem;
-          margin: 1.5rem 0;
-          font-style: italic;
-          color: #6b7280;
-        }
-        
-        /* Ensure BlogHandy content displays properly */
-        .blog-post-content .bh-post,
-        .blog-post-content .post,
-        .blog-post-content article {
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
-        }
-        
-        @keyframes fadeIn {
-          from { 
-            opacity: 0; 
-            transform: translateY(20px); 
-          }
-          to { 
-            opacity: 1; 
-            transform: translateY(0); 
-          }
-        }
-      `}</style>
       
       <Footer />
     </>
   );
 };
-
-// Declare global BlogHandy variables for TypeScript
-declare global {
-  interface Window {
-    bh_id: string;
-  }
-}
 
 export default BlogPostPage;
