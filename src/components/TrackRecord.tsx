@@ -17,7 +17,7 @@ const WhyChooseUs = () => {
     {
       title: '24/7 Client Support',
       description: 'Round-the-clock availability ensures you always have access to legal guidance when you need it most.',
-      image: 'https://images.unsplash.com/photo-1553484771-371a605b060b?w=400&h=300&fit=crop',
+      image: 'https://i.postimg.cc/tg70CwXg/7X2A2882.jpg',
       color: 'bg-gradient-to-br from-green-400 to-blue-500',
       stat: '24/7',
       statLabel: 'Availability'
