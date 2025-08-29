@@ -17,7 +17,7 @@ async function gql(query: string, variables: Record<string, any> = {}) {
 
   if (data.errors) {
     console.error("GraphQL Errors:", data.errors);
-    throw new Error("Monday API error");
+    throw new Error(`Monday API error: ${data.errors[0].message}`);
   }
 
   return data.data;
@@ -25,7 +25,7 @@ async function gql(query: string, variables: Record<string, any> = {}) {
 
 export async function getBoardColumns() {
   const query = `
-    query ($boardId: [Int]!) {
+    query ($boardId: [ID!]!) {
       boards (ids: $boardId) {
         columns {
           id
@@ -36,20 +36,21 @@ export async function getBoardColumns() {
       }
     }
   `;
-  const data = await gql(query, { boardId: Number(BOARD_ID) });
+  // Pass as string, not number
+  const data = await gql(query, { boardId: BOARD_ID });
   return data.boards[0].columns;
 }
 
 export async function createBoardItem(itemName: string, columnValues: Record<string, any>) {
   const query = `
-    mutation ($boardId: Int!, $itemName: String!, $columnValues: JSON!) {
+    mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!) {
       create_item (board_id: $boardId, item_name: $itemName, column_values: $columnValues) {
         id
       }
     }
   `;
   const variables = {
-    boardId: Number(BOARD_ID),
+    boardId: BOARD_ID, // string
     itemName,
     columnValues: JSON.stringify(columnValues),
   };
