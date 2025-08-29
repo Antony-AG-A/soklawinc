@@ -652,4 +652,4 @@ const Contact: React.FC = () => {
   );
 };
 
-export default Contact;</parameter>
+export default Contact;
