@@ -302,4 +302,4 @@ export async function getBoardItems(limit: number = 10): Promise<any[]> {
     logError(mondayError);
     throw mondayError;
   }
-}</parameter>
+}
