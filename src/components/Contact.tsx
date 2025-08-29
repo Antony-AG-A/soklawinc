@@ -1,4 +1,3 @@
-// Contact.tsx
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
 import { getBoardColumns, createBoardItem, type MondayColumn } from '../mondayApi';
