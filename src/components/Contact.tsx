@@ -1,40 +1,84 @@
-import React, { useState, useEffect, useRef } from 'react';
+// Contact.tsx
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { getBoardColumns, createBoardItem, type MondayColumn } from '../mondayApi';
 
-const Contact = () => {
+type SubmitState = 'idle' | 'success' | 'error';
+
+function parseLabels(col?: MondayColumn): string[] {
+  if (!col?.settings_str) return [];
+  try {
+    const s = JSON.parse(col.settings_str);
+    // status: { labels: { "0":"A","1":"B" } }
+    if (s.labels && !Array.isArray(s.labels)) return Object.values(s.labels).filter(Boolean);
+    if (Array.isArray(s.labels)) return s.labels.filter(Boolean);
+    // dropdown: { options: [{name:"A"}] or [{title:"A"}] }
+    if (Array.isArray(s.options)) return s.options.map((o: any) => o.name || o.title).filter(Boolean);
+  } catch {}
+  return [];
+}
+
+const Contact: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+
+  // Fixed UI fields (keeps your design)
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    legalService: '',
-    message: ''
+    firstName: '', lastName: '', email: '', phone: '',
+    legalService: '', message: ''
   });
+
+  // Monday-driven bits
+  const [columns, setColumns] = useState<MondayColumn[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<SubmitState>('idle');
+  const [extraValues, setExtraValues] = useState<Record<string, any>>({});
 
+  // Load Monday columns on mount
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const elements = entry.target.querySelectorAll('.animate-on-scroll');
-            elements.forEach((element, index) => {
-              setTimeout(() => {
-                element.classList.add('animate-fade-in-up');
-              }, index * 100);
-            });
-          }
-        });
-      },
-      { threshold: 0.1 }
+    getBoardColumns().then(setColumns).catch(console.error);
+  }, []);
+
+  // Find best-fit columns for our fixed fields
+  const emailCol   = useMemo(() => columns.find(c => c.type === 'email'), [columns]);
+  const phoneCol   = useMemo(() => columns.find(c => c.type === 'phone'), [columns]);
+  const messageCol = useMemo(
+    () => columns.find(c => c.type === 'long_text' || /message|details|notes/i.test(c.title)),
+    [columns]
+  );
+  const serviceCol = useMemo(
+    () => columns.find(c => (c.type === 'status' || c.type === 'dropdown') && /service|practice|matter|type/i.test(c.title)),
+    [columns]
+  );
+
+  const legalServiceOptions = useMemo(() => {
+    const opts = parseLabels(serviceCol);
+    return opts.length ? opts : [
+      'Corporate Law', 'Litigation', 'Real Estate',
+      'Employment Law', 'Intellectual Property', 'Family Law', 'Other'
+    ];
+  }, [serviceCol]);
+
+  // Any other Monday columns become "Additional Details" fields
+  const extraCols = useMemo(() => {
+    const skip = new Set([emailCol?.id, phoneCol?.id, messageCol?.id, serviceCol?.id, 'name']);
+    return columns.filter(c =>
+      !skip.has(c.id) &&
+      !['creation_log', 'last_updated', 'world_clock', 'auto_number', 'date_created'].includes(c.type)
     );
+  }, [columns, emailCol, phoneCol, messageCol, serviceCol]);
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+  // Animate in (your existing effect)
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const els = entry.target.querySelectorAll('.animate-on-scroll');
+          els.forEach((el, i) => setTimeout(() => el.classList.add('animate-fade-in-up'), i * 100));
+        }
+      });
+    }, { threshold: 0.1 });
 
+    if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, []);
 
@@ -42,10 +86,16 @@ const Contact = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleExtraChange = (id: string, value: any) => {
+    setExtraValues(prev => ({ ...prev, [id]: value }));
+  };
+
+  const resetForm = () => {
+    setFormData({ firstName: '', lastName: '', email: '', phone: '', legalService: '', message: '' });
+    setExtraValues({});
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,62 +104,45 @@ const Contact = () => {
     setSubmitStatus('idle');
 
     try {
-      const API_TOKEN = process.env.NEXT_PUBLIC_MONDAY_API_KEY; // store safely
-      const BOARD_ID = process.env.NEXT_PUBLIC_MONDAY_BOARD_ID; // your Monday board
-      const GROUP_ID = 'topics'; // group inside the board
+      const columnValues: Record<string, any> = {};
 
-      const query = `
-        mutation {
-          create_item(
-            board_id: ${BOARD_ID},
-            group_id: "${GROUP_ID}",
-            item_name: "${formData.firstName} ${formData.lastName}",
-            column_values: ${JSON.stringify({
-              email: { email: formData.email, text: formData.email },
-              phone: formData.phone,
-              status: { label: formData.legalService },
-              text: formData.message
-            }).replace(/"([^"]+)":/g, '$1:')}
-          ) {
-            id
-          }
-        }
-      `;
+      if (emailCol && formData.email) {
+        columnValues[emailCol.id] = { email: formData.email, text: formData.email };
+      }
+      if (phoneCol && formData.phone) {
+        columnValues[phoneCol.id] = { phone: formData.phone };
+      }
+      if (serviceCol && formData.legalService) {
+        columnValues[serviceCol.id] = { label: formData.legalService };
+      }
+      if (messageCol && formData.message) {
+        columnValues[messageCol.id] = formData.message;
+      }
 
-      const response = await fetch('https://api.monday.com/v2', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: API_TOKEN || ''
-        },
-        body: JSON.stringify({ query })
-      });
+      // add any extra dynamic fields
+      for (const [id, val] of Object.entries(extraValues)) {
+        columnValues[id] = val;
+      }
 
-      const result = await response.json();
+      const itemName =
+        `${formData.firstName} ${formData.lastName}`.trim() ||
+        formData.email ||
+        'Website Lead';
 
-      if (result.data?.create_item?.id) {
+      const result = await createBoardItem(itemName, columnValues);
+
+      if (result?.create_item?.id) {
         setSubmitStatus('success');
         resetForm();
       } else {
-        throw new Error('Monday API failed');
+        throw new Error('Create item failed');
       }
-    } catch (error) {
-      console.error('Submission error:', error);
+    } catch (err) {
+      console.error(err);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const resetForm = () => {
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      legalService: '',
-      message: ''
-    });
   };
 
   const officeInfo = [
@@ -118,7 +151,7 @@ const Contact = () => {
       address: 'Upper Hill, ABC Place, 5th Floor\nWaiyaki Way, Nairobi',
       phone: '+254 700 123 456',
       email: 'Info@soklaw.co.ke'
-    }
+    },
   ];
 
   return (
@@ -126,12 +159,9 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div className="text-center mb-16">
-          <h2 className="animate-on-scroll opacity-0 text-4xl md:text-5xl font-bold mb-6">
-            Get In Touch
-          </h2>
+          <h2 className="animate-on-scroll opacity-0 text-4xl md:text-5xl font-bold mb-6">Get In Touch</h2>
           <p className="animate-on-scroll opacity-0 text-xl max-w-3xl mx-auto">
-            Ready to discuss your legal needs? Contact us today for a consultation 
-            with our experienced legal team.
+            Ready to discuss your legal needs? Contact us today for a consultation with our experienced legal team.
           </p>
           <div className="animate-on-scroll opacity-0 w-24 h-1 bg-gradient-to-r from-yellow-600 to-yellow-500 mx-auto mt-6"></div>
         </div>
@@ -141,25 +171,21 @@ const Contact = () => {
           <div className="space-y-8">
             <div className="animate-on-scroll opacity-0">
               <h3 className="text-2xl font-bold mb-6">Our Office Locations</h3>
-              {officeInfo.map((office, index) => (
-                <div key={index} className="mb-8 p-6 bg-gray-50 rounded-xl border hover:shadow-lg transition-shadow duration-300">
-                  <h4 className="text-xl font-semibold mb-4">{office.city}</h4>
+              {officeInfo.map((o, i) => (
+                <div key={i} className="mb-8 p-6 bg-gray-50 rounded-xl border hover:shadow-lg transition-shadow duration-300">
+                  <h4 className="text-xl font-semibold mb-4">{o.city}</h4>
                   <div className="space-y-3">
                     <div className="flex items-start space-x-3">
                       <MapPin className="h-5 w-5 mt-1 flex-shrink-0 text-yellow-600" />
-                      <p className="whitespace-pre-line">{office.address}</p>
+                      <p className="whitespace-pre-line">{o.address}</p>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Phone className="h-5 w-5 flex-shrink-0 text-yellow-600" />
-                      <a href={`tel:${office.phone}`} className="hover:text-yellow-600">
-                        {office.phone}
-                      </a>
+                      <a href={`tel:${o.phone}`} className="hover:text-yellow-600">{o.phone}</a>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Mail className="h-5 w-5 flex-shrink-0 text-yellow-600" />
-                      <a href={`mailto:${office.email}`} className="hover:text-yellow-600">
-                        {office.email}
-                      </a>
+                      <a href={`mailto:${o.email}`} className="hover:text-yellow-600">{o.email}</a>
                     </div>
                   </div>
                 </div>
@@ -168,11 +194,10 @@ const Contact = () => {
 
             <div className="animate-on-scroll opacity-0 p-6 bg-yellow-50 rounded-xl border border-yellow-200">
               <h4 className="text-xl font-semibold mb-4 flex items-center text-yellow-800">
-                <Clock className="h-5 w-5 mr-2 text-yellow-600" />
-                Business Hours
+                <Clock className="h-5 w-5 mr-2 text-yellow-600" /> Business Hours
               </h4>
               <div className="space-y-2 text-yellow-700">
-                <div className="flex justify-between"><span>Mon - Fri</span><span>8:00 AM - 6:00 PM</span></div>
+                <div className="flex justify-between"><span>Monday - Friday</span><span>8:00 AM - 6:00 PM</span></div>
                 <div className="flex justify-between"><span>Saturday</span><span>9:00 AM - 2:00 PM</span></div>
                 <div className="flex justify-between"><span>Sunday</span><span>Emergency Only</span></div>
               </div>
@@ -182,47 +207,118 @@ const Contact = () => {
           {/* Right: Contact Form */}
           <div className="animate-on-scroll opacity-0">
             <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-xl border space-y-4">
-              <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">
-                Request a Consultation
-              </h3>
+              <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">Request a Consultation</h3>
 
               {/* First/Last Name */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange}
-                  placeholder="First Name *" required className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl" />
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange}
-                  placeholder="Last Name *" required className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl" />
+                <input
+                  type="text" name="firstName" value={formData.firstName} onChange={handleInputChange}
+                  placeholder="First Name *" required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl"
+                />
+                <input
+                  type="text" name="lastName" value={formData.lastName} onChange={handleInputChange}
+                  placeholder="Last Name *" required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl"
+                />
               </div>
 
               {/* Email/Phone */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange}
-                  placeholder="your.email@example.com" required className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl" />
-                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange}
-                  placeholder="+254 700 000 000" className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl" />
+                <input
+                  type="email" name="email" value={formData.email} onChange={handleInputChange}
+                  placeholder="your.email@example.com" required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl"
+                />
+                <input
+                  type="tel" name="phone" value={formData.phone} onChange={handleInputChange}
+                  placeholder="+254 700 000 000"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl"
+                />
               </div>
 
-              {/* Service */}
-              <select name="legalService" value={formData.legalService} onChange={handleInputChange} required
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white">
-                <option value="">Select a service</option>
-                <option value="corporate-law">Corporate Law</option>
-                <option value="litigation">Litigation</option>
-                <option value="real-estate">Real Estate</option>
-                <option value="employment-law">Employment Law</option>
-                <option value="intellectual-property">Intellectual Property</option>
-                <option value="family-law">Family Law</option>
-                <option value="other">Other</option>
-              </select>
+              {/* Legal Service (filled from Monday if available) */}
+              <div>
+                <select
+                  name="legalService" value={formData.legalService} onChange={handleInputChange} required
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white"
+                >
+                  <option value="">Select a service</option>
+                  {legalServiceOptions.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
 
               {/* Message */}
-              <textarea name="message" value={formData.message} onChange={handleInputChange}
-                placeholder="Please describe your legal matter..." required rows={5}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-vertical"></textarea>
+              <div>
+                <textarea
+                  name="message" value={formData.message} onChange={handleInputChange}
+                  placeholder="Please describe your legal matter and how we can help you..." required rows={5}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-vertical"
+                />
+              </div>
+
+              {/* Additional Details (auto from Monday) */}
+              {extraCols.length > 0 && (
+                <div className="pt-2">
+                  <h4 className="text-md font-semibold text-gray-700 mb-2">Additional details</h4>
+                  <div className="space-y-3">
+                    {extraCols.map(col => {
+                      const labels = parseLabels(col);
+                      if (col.type === 'long_text') {
+                        return (
+                          <div key={col.id}>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">{col.title}</label>
+                            <textarea
+                              value={extraValues[col.id] || ""}
+                              onChange={e => handleExtraChange(col.id, e.target.value)}
+                              rows={4}
+                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl resize-vertical"
+                            />
+                          </div>
+                        );
+                      }
+                      if (col.type === 'status' || col.type === 'dropdown') {
+                        return (
+                          <div key={col.id}>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">{col.title}</label>
+                            <select
+                              value={extraValues[col.id] || ""}
+                              onChange={e => handleExtraChange(col.id, e.target.value)}
+                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-white"
+                            >
+                              <option value="">Select...</option>
+                              {labels.map(l => <option key={l} value={l}>{l}</option>)}
+                            </select>
+                          </div>
+                        );
+                      }
+                      // email/phone/text fallback
+                      const inputType =
+                        col.type === 'email' ? 'email' :
+                        col.type === 'phone' ? 'tel' : 'text';
+                      return (
+                        <div key={col.id}>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">{col.title}</label>
+                          <input
+                            type={inputType}
+                            value={extraValues[col.id] || ""}
+                            onChange={e => handleExtraChange(col.id, e.target.value)}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Submit */}
-              <button type="submit" disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50">
+              <button
+                type="submit" disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50"
+              >
                 {isSubmitting ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
@@ -230,7 +326,8 @@ const Contact = () => {
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" /> Send Message
+                    <Send className="w-4 h-4" />
+                    Send Message
                   </>
                 )}
               </button>
@@ -239,13 +336,19 @@ const Contact = () => {
               {submitStatus === 'success' && (
                 <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl flex items-start gap-3">
                   <CheckCircle className="w-5 h-5 mt-0.5 text-green-600" />
-                  <p>Message sent successfully! We'll get back to you soon.</p>
+                  <div>
+                    <p className="font-medium">Message sent successfully!</p>
+                    <p className="text-sm">We'll get back to you within 24 hours.</p>
+                  </div>
                 </div>
               )}
               {submitStatus === 'error' && (
                 <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 mt-0.5 text-red-600" />
-                  <p>Something went wrong. Please try again or email us directly.</p>
+                  <div>
+                    <p className="font-medium">Something went wrong.</p>
+                    <p className="text-sm">Please try again or contact us directly at Info@soklaw.co.ke</p>
+                  </div>
                 </div>
               )}
             </form>
@@ -254,14 +357,8 @@ const Contact = () => {
       </div>
 
       <style jsx>{`
-        .animate-on-scroll {
-          transition: all 0.6s ease-out;
-          transform: translateY(20px);
-        }
-        .animate-fade-in-up {
-          opacity: 1 !important;
-          transform: translateY(0) !important;
-        }
+        .animate-on-scroll { transition: all 0.6s ease-out; transform: translateY(20px); }
+        .animate-fade-in-up { opacity: 1 !important; transform: translateY(0) !important; }
       `}</style>
     </section>
   );
