@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle } from 'lucide-react';
-import { getBoardColumns, createBoardItem, type MondayColumn } from '../mondayApi';
+import { getBoardColumns, createBoardItem, type MondayColumn } from '../Mondayapi';
 
 type SubmitState = 'idle' | 'success' | 'error';
 
