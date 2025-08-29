@@ -17,7 +17,7 @@ async function gql(query: string, variables: Record<string, any> = {}) {
 
   if (data.errors) {
     console.error("GraphQL Errors:", data.errors);
-    throw new Error("Monday API error");
+    throw new Error(`Monday API error: ${data.errors[0].message}`);
   }
 
   return data.data;
