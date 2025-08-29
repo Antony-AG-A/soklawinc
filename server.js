@@ -2,7 +2,7 @@ import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 
-dotenv.config(); // loads your .env.local
+dotenv.config(); // loads .env.local
 
 const app = express();
 app.use(express.json());
@@ -15,7 +15,7 @@ app.post("/monday", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": process.env.VITE_MONDAY_API_KEY, // from .env.local
+        "Authorization": process.env.VITE_MONDAY_API_KEY,
       },
       body: JSON.stringify({ query, variables }),
     });
@@ -27,4 +27,4 @@ app.post("/monday", async (req, res) => {
   }
 });
 
-app.listen(4000, () => console.log("✅ Server running at http://localhost:4000"));
+app.listen(4000, () => console.log("✅ Proxy running at http://localhost:4000"));
