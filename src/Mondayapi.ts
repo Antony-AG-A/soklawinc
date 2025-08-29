@@ -1,14 +1,13 @@
-const API_KEY = import.meta.env.VITE_MONDAY_API_KEY as string;
 const BOARD_ID = import.meta.env.VITE_MONDAY_BOARD_ID as string;
 
-const MONDAY_API_URL = "https://api.monday.com/v2";
+// Point to your proxy, not Monday directly
+const MONDAY_PROXY_URL = "http://localhost:4000/monday";
 
 async function gql(query: string, variables: Record<string, any> = {}) {
-  const res = await fetch(MONDAY_API_URL, {
+  const res = await fetch(MONDAY_PROXY_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": API_KEY,
     },
     body: JSON.stringify({ query, variables }),
   });
@@ -36,7 +35,6 @@ export async function getBoardColumns() {
       }
     }
   `;
-  // Pass as string, not number
   const data = await gql(query, { boardId: BOARD_ID });
   return data.boards[0].columns;
 }
@@ -50,7 +48,7 @@ export async function createBoardItem(itemName: string, columnValues: Record<str
     }
   `;
   const variables = {
-    boardId: BOARD_ID, // string
+    boardId: BOARD_ID,
     itemName,
     columnValues: JSON.stringify(columnValues),
   };
