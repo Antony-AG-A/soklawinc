@@ -310,4 +310,4 @@ app.listen(PORT, () => {
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`📈 API status: http://localhost:${PORT}/api/status`);
   console.log(`🔒 Security: Helmet, CORS, and Rate Limiting enabled`);
-});</parameter>
+});
