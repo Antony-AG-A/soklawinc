@@ -1,73 +1,59 @@
-import axios from "axios";
-
 const MONDAY_API_URL = "https://api.monday.com/v2";
 const MONDAY_API_KEY = import.meta.env.VITE_MONDAY_API_KEY as string;
 
-/**
- * Get all columns of a board
- */
-export const getBoardColumns = async (boardId: number) => {
+async function gql(query: string, variables: Record<string, any> = {}) {
+  const res = await fetch(MONDAY_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": MONDAY_API_KEY,
+    },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  const data = await res.json();
+
+  if (data.errors) {
+    console.error("GraphQL Errors:", data.errors);
+    throw new Error(`Monday API error: ${data.errors[0].message}`);
+  }
+
+  return data.data;
+}
+
+export async function getBoardColumns() {
   const query = `
-    query {
-      boards (ids: ${boardId}) {
+    query ($boardId: [ID!]!) {
+      boards (ids: $boardId) {
         columns {
           id
           title
           type
+          settings_str
         }
       }
     }
   `;
 
-  const response = await axios.post(
-    MONDAY_API_URL,
-    { query },
-    {
-      headers: {
-        Authorization: MONDAY_API_KEY,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const data = await gql(query, { boardId: import.meta.env.VITE_MONDAY_BOARD_ID });
+  return data.boards[0].columns;
+}
 
-  return response.data.data.boards[0].columns;
-};
-
-/**
- * Create a new item in the board
- */
-export const createBoardItem = async (
-  boardId: number,
-  groupId: string,
-  itemName: string,
-  columnValues: Record<string, any>
-) => {
+export async function createBoardItem(itemName: string, columnValues: Record<string, any>) {
   const query = `
-    mutation {
-      create_item(
-        board_id: ${boardId},
-        group_id: "${groupId}",
-        item_name: "${itemName}",
-        column_values: ${JSON.stringify(JSON.stringify(columnValues))}
-      ) {
+    mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!) {
+      create_item (board_id: $boardId, item_name: $itemName, column_values: $columnValues) {
         id
       }
     }
   `;
 
-  const response = await axios.post(
-    MONDAY_API_URL,
-    { query },
-    {
-      headers: {
-        Authorization: MONDAY_API_KEY,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const variables = {
+    boardId: import.meta.env.VITE_MONDAY_BOARD_ID,
+    itemName,
+    columnValues: JSON.stringify(columnValues),
+  };
 
-  return response.data.data.create_item;
-};
-
-// ✅ Export alias so `createItem` still works
-export { createBoardItem as createItem };
+  const data = await gql(query, variables);
+  return data.create_item;
+}
