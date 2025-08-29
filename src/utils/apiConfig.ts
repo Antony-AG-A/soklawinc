@@ -122,4 +122,4 @@ export function getGhostHeaders(): Record<string, string> {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   };
-}</parameter>
+}
