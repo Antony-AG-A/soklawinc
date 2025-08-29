@@ -1,56 +1,60 @@
-const MONDAY_API_URL = "https://api.monday.com/v2";
-const MONDAY_API_KEY = "<YOUR_API_KEY>"; // replace with your actual key
+const API_KEY = import.meta.env.VITE_MONDAY_API_KEY as string;
+const BOARD_ID = import.meta.env.VITE_MONDAY_BOARD_ID as string;
 
-async function mondayRequest(query: string, variables?: Record<string, any>) {
+const MONDAY_API_URL = "https://api.monday.com/v2";
+
+async function gql(query: string, variables: Record<string, any> = {}) {
   const res = await fetch(MONDAY_API_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: MONDAY_API_KEY,
+      "Authorization": API_KEY,
     },
     body: JSON.stringify({ query, variables }),
   });
 
   const data = await res.json();
+
   if (data.errors) {
-    console.error("Monday API error:", data.errors);
-    throw new Error(data.errors[0].message);
+    console.error("GraphQL Errors:", data.errors);
+    throw new Error(`Monday API error: ${data.errors[0].message}`);
   }
+
   return data.data;
 }
 
-// ✅ Get board columns
-export async function getBoardColumns(boardId: number) {
+export async function getBoardColumns() {
   const query = `
-    query ($boardId: [Int]) {
-      boards(ids: $boardId) {
+    query ($boardId: [ID!]!) {
+      boards (ids: $boardId) {
         columns {
           id
           title
           type
+          settings_str
         }
       }
     }
   `;
-  const data = await mondayRequest(query, { boardId });
+  // Pass as string, not number
+  const data = await gql(query, { boardId: BOARD_ID });
   return data.boards[0].columns;
 }
 
-// ✅ Create item
-export async function createItem(boardId: number, groupId: string, itemName: string, columnValues: Record<string, any>) {
+export async function createBoardItem(itemName: string, columnValues: Record<string, any>) {
   const query = `
-    mutation ($boardId: Int!, $groupId: String!, $itemName: String!, $columnValues: JSON!) {
-      create_item(board_id: $boardId, group_id: $groupId, item_name: $itemName, column_values: $columnValues) {
+    mutation ($boardId: ID!, $itemName: String!, $columnValues: JSON!) {
+      create_item (board_id: $boardId, item_name: $itemName, column_values: $columnValues) {
         id
       }
     }
   `;
   const variables = {
-    boardId,
-    groupId,
+    boardId: BOARD_ID, // string
     itemName,
     columnValues: JSON.stringify(columnValues),
   };
-  const data = await mondayRequest(query, variables);
+
+  const data = await gql(query, variables);
   return data.create_item;
 }
