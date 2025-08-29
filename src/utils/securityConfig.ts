@@ -394,4 +394,4 @@ export async function mondayHealthCheck(): Promise<{
       error: mondayError.message
     };
   }
-}</parameter>
+}
